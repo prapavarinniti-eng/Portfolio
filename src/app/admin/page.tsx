@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase, PortfolioImage } from '@/lib/supabase';
 import Image from 'next/image';
 
@@ -155,7 +155,7 @@ export default function AdminPanel() {
         loadStats();
         loadImages();
       }
-    } catch (error) {
+    } catch {
       setMessage(`❌ ลบรูปล้มเหลว`);
     }
   };
@@ -177,7 +177,7 @@ export default function AdminPanel() {
         loadStats();
         loadImages();
       }
-    } catch (error) {
+    } catch {
       setMessage(`❌ ลบรูปล้มเหลว`);
     }
   };
@@ -207,7 +207,7 @@ export default function AdminPanel() {
         loadStats();
         loadImages();
       }
-    } catch (error) {
+    } catch {
       setMessage(`❌ อัพเดทล้มเหลว`);
     }
   };
@@ -518,7 +518,7 @@ export default function AdminPanel() {
                       <select
                         defaultValue={editingImage.category}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                        onChange={(e) => setEditingImage({...editingImage, category: e.target.value as any})}
+                        onChange={(e) => setEditingImage({...editingImage, category: e.target.value as 'wedding' | 'corporate' | 'buffet' | 'cocktail' | 'fine-dining' | 'coffee-break' | 'snack-box'})}
                       >
                         <option value="wedding">งานแต่งงาน</option>
                         <option value="corporate">งานบริษัท</option>

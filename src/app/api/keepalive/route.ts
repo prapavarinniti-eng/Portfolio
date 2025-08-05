@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
       timestamp: new Date().toISOString(),
       received: body
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json({
       status: 'error',
       message: 'Invalid JSON body'
