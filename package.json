@@ -28,6 +28,7 @@
     "watch:push": "node watch-and-push.js",
     "dev:autopush": "concurrently \"npm run dev\" \"npm run watch:push\"",
     "gemini:push": "node gemini-hook.js",
+    "gemini": "powershell -ExecutionPolicy Bypass -File ./gemini-autopush.ps1",
     "admin:help": "node quick-admin.js help",
     "keepalive": "node keep-alive.js",
     "cron:keepalive": "node cron-keepalive.js"
