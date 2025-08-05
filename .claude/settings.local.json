@@ -44,7 +44,12 @@
       "Bash(git add:*)",
       "Bash(git commit:*)",
       "Bash(git push:*)",
-      "Bash(git remote set-url:*)"
+      "Bash(git remote set-url:*)",
+      "WebFetch(domain:portfolio-yap6.onrender.com)",
+      "Bash(code:*)",
+      "Bash(git config:*)",
+      "Bash(./setup-gemini-alias.bat)",
+      "Bash(gemini-auto:*)"
     ],
     "deny": []
   }

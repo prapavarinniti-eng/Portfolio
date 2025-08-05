@@ -1,0 +1,11 @@
+{
+  "files.autoSave": "afterDelay",
+  "files.autoSaveDelay": 1000,
+  "git.enableAutoRefresh": true,
+  "git.autofetch": true,
+  "editor.formatOnSave": true,
+  "auto-git.enabled": true,
+  "auto-git.interval": 10000,
+  "auto-git.commitMessage": "Auto-commit: ${timestamp}",
+  "auto-git.push": true
+}
