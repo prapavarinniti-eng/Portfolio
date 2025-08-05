@@ -311,6 +311,36 @@ async function editImage() {
   console.log('         แก้ไขข้อความภาพ');
   console.log('✏️ =======================================\n');
   
+  console.log('📂 เลือกวิธีการแก้ไข:');
+  console.log('1. ดูภาพทั้งหมด');
+  console.log('2. เลือกตามหมวดหมู่');
+  console.log('3. 🔙 กลับเมนูหลัก\n');
+  
+  const editMode = await ask('👉 เลือกวิธีการ (1-3): ');
+  
+  switch(editMode) {
+    case '1':
+      await editAllImages();
+      break;
+    case '2':
+      await editByCategory();
+      break;
+    case '3':
+      return await showMainMenu();
+    default:
+      console.log('❌ เลือกตัวเลข 1-3 เท่านั้น');
+      await ask('กดเอนเทอร์เพื่อลองใหม่...');
+      return await editImage();
+  }
+}
+
+// Edit all images (original functionality)
+async function editAllImages() {
+  console.clear();
+  console.log('✏️ =======================================');
+  console.log('       แก้ไขข้อความภาพ (ทั้งหมด)');
+  console.log('✏️ =======================================\n');
+  
   // Get all images
   const { data: images, error } = await supabase
     .from('portfolio_images')
@@ -331,28 +361,150 @@ async function editImage() {
   
   console.log('📋 รายการภาพทั้งหมด:');
   images.forEach((img, i) => {
-    console.log(`${i + 1}. [${img.category}] ${img.title}`);
+    const categoryInfo = Object.values(categories).find(c => c.category === img.category);
+    const categoryName = categoryInfo ? categoryInfo.name : img.category;
+    console.log(`${i + 1}. [${categoryName}] ${img.title}`);
   });
   
-  const choice = await ask(`\n👉 เลือกภาพที่ต้องการแก้ไข (1-${images.length}): `);
+  const choice = await ask(`\n👉 เลือกภาพที่ต้องการแก้ไข (1-${images.length}) หรือ 0 เพื่อกลับ: `);
+  
+  if (choice === '0') {
+    return await editImage();
+  }
+  
   const index = parseInt(choice) - 1;
   
   if (index < 0 || index >= images.length) {
     console.log('❌ เลือกหมายเลขที่ถูกต้อง');
     await ask('กดเอนเทอร์เพื่อลองใหม่...');
+    return await editAllImages();
+  }
+  
+  await performImageEdit(images[index]);
+  await ask('\nกดเอนเทอร์เพื่อกลับเมนูหลัก...');
+  await showMainMenu();
+}
+
+// Edit by category
+async function editByCategory() {
+  console.clear();
+  console.log('✏️ =======================================');
+  console.log('     แก้ไขข้อความภาพ (ตามหมวดหมู่)');
+  console.log('✏️ =======================================\n');
+  
+  // Show categories
+  console.log('📂 เลือกหมวดหมู่:');
+  Object.keys(categories).forEach(key => {
+    console.log(`${key}. ${categories[key].name}`);
+  });
+  console.log('10. 🔙 กลับเมนูแก้ไข\n');
+  
+  const categoryChoice = await ask('👉 เลือกหมวดหมู่ (1-10): ');
+  
+  if (categoryChoice === '10') {
     return await editImage();
   }
   
-  const selectedImage = images[index];
+  if (!categories[categoryChoice]) {
+    console.log('❌ เลือกหมายเลข 1-10 เท่านั้น');
+    await ask('กดเอนเทอร์เพื่อลองใหม่...');
+    return await editByCategory();
+  }
+  
+  const selectedCategory = categories[categoryChoice];
+  
+  // Get images for this category
+  const { data: images, error } = await supabase
+    .from('portfolio_images')
+    .select('*')
+    .eq('category', selectedCategory.category)
+    .order('created_at', { ascending: false });
+  
+  if (error) {
+    console.log('❌ เกิดข้อผิดพลาดในการโหลดข้อมูล:', error.message);
+    await ask('กดเอนเทอร์เพื่อลองใหม่...');
+    return await editByCategory();
+  }
+  
+  if (images.length === 0) {
+    console.log(`❌ ไม่มีภาพในหมวด ${selectedCategory.name}`);
+    await ask('กดเอนเทอร์เพื่อกลับเลือกหมวดใหม่...');
+    return await editByCategory();
+  }
+  
+  console.log(`\n📂 หมวด: ${selectedCategory.name} (${images.length} ภาพ)`);
+  console.log('='.repeat(50));
+  
+  images.forEach((img, i) => {
+    console.log(`${i + 1}. 🖼️  ${img.title}`);
+    console.log(`   📝 ${img.description.substring(0, 60)}...`);
+    console.log();
+  });
+  
+  const choice = await ask(`\n👉 เลือกภาพที่ต้องการแก้ไข (1-${images.length}) หรือ 0 เพื่อกลับ: `);
+  
+  if (choice === '0') {
+    return await editByCategory();
+  }
+  
+  const index = parseInt(choice) - 1;
+  
+  if (index < 0 || index >= images.length) {
+    console.log('❌ เลือกหมายเลขที่ถูกต้อง');
+    await ask('กดเอนเทอร์เพื่อลองใหม่...');
+    return await editByCategory();
+  }
+  
+  await performImageEdit(images[index]);
+  
+  console.log('\n📋 ต้องการทำอะไรต่อ?');
+  console.log('1. แก้ไขภาพอื่นในหมวดเดียวกัน');
+  console.log('2. เลือกหมวดหมู่อื่น');
+  console.log('3. กลับเมนูหลัก');
+  
+  const nextChoice = await ask('\n👉 เลือก (1-3): ');
+  
+  switch(nextChoice) {
+    case '1':
+      return await editByCategory();
+    case '2':      
+      return await editByCategory();
+    case '3':
+    default:
+      return await showMainMenu();
+  }
+}
+
+// Perform image edit (shared function)
+async function performImageEdit(selectedImage) {
+  const categoryInfo = Object.values(categories).find(c => c.category === selectedImage.category);
+  const categoryName = categoryInfo ? categoryInfo.name : selectedImage.category;
   
   console.log(`\n📝 ข้อมูลปัจจุบัน:`);
   console.log(`🖼️  ชื่อ: ${selectedImage.title}`);
   console.log(`📝 คำอธิบาย: ${selectedImage.description}`);
-  console.log(`📂 หมวดหมู่: ${selectedImage.category}`);
+  console.log(`📂 หมวดหมู่: ${categoryName}`);
   
   console.log('\n✏️ กรอกข้อมูลใหม่ (เว้นว่างเพื่อใช้ข้อมูลเดิม):');
   const newTitle = await ask('👉 ชื่อใหม่: ') || selectedImage.title;
   const newDescription = await ask('👉 คำอธิบายใหม่: ') || selectedImage.description;
+  
+  // Check if anything changed
+  if (newTitle === selectedImage.title && newDescription === selectedImage.description) {
+    console.log('\n💡 ไม่มีการเปลี่ยนแปลงข้อมูล');
+    return;
+  }
+  
+  console.log('\n📝 ตรวจสอบข้อมูลใหม่:');
+  console.log(`🖼️  ชื่อใหม่: ${newTitle}`);
+  console.log(`📝 คำอธิบายใหม่: ${newDescription}`);
+  
+  const confirm = await ask('\n👉 ยืนยันการแก้ไข? (yes/no): ');
+  
+  if (confirm.toLowerCase() !== 'yes' && confirm.toLowerCase() !== 'y') {
+    console.log('❌ ยกเลิกการแก้ไข');
+    return;
+  }
   
   // Update database
   try {
@@ -374,9 +526,6 @@ async function editImage() {
   } catch (error) {
     console.log('❌ เกิดข้อผิดพลาด:', error.message);
   }
-  
-  await ask('\nกดเอนเทอร์เพื่อกลับเมนูหลัก...');
-  await showMainMenu();
 }
 
 // Delete image
