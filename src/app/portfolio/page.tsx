@@ -52,7 +52,7 @@ export default function Portfolio() {
   }, []);
 
   const handleCategoryChange = (category: string) => {
-    setSelectedCategory(category);
+    setSelectedCategory(category as PortfolioCategory | '');
     
     // Update URL without page reload for better UX
     if (typeof window !== 'undefined') {
@@ -72,7 +72,7 @@ export default function Portfolio() {
       const urlParams = new URLSearchParams(window.location.search);
       const categoryFromUrl = urlParams.get('category');
       if (categoryFromUrl) {
-        setSelectedCategory(categoryFromUrl);
+        setSelectedCategory(categoryFromUrl as PortfolioCategory | '');
       }
     }
   }, []);
