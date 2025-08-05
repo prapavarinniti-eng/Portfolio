@@ -2,14 +2,14 @@
 
 import { useState, useEffect, useCallback, memo } from 'react';
 import Image from 'next/image';
-import { PortfolioImage, getPortfolioImages, getPortfolioImagesCount } from '@/lib/supabase';
+import { PortfolioImage, PortfolioCategory, getPortfolioImages, getPortfolioImagesCount } from '@/lib/supabase';
 
 /**
  * Props interface for PortfolioGrid component
  */
 interface PortfolioGridProps {
   /** Selected category to filter images */
-  selectedCategory?: string;
+  selectedCategory?: PortfolioCategory;
 }
 
 /**
