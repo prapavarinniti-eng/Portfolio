@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import CategoryFilter from '@/components/CategoryFilter';
+import { PortfolioCategory } from '@/lib/supabase';
 
 // Dynamic imports for better code splitting
 const PortfolioGrid = dynamic(() => import('@/components/PortfolioGrid'), {
@@ -30,7 +31,7 @@ function PortfolioGridSkeleton() {
  * Portfolio page component with optimized performance and error handling
  */
 export default function Portfolio() {
-  const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [selectedCategory, setSelectedCategory] = useState<PortfolioCategory | ''>('');
   const [isClient, setIsClient] = useState(false);
 
   // Handle hydration and set page title
@@ -219,7 +220,7 @@ export default function Portfolio() {
 
           <ErrorBoundary>
             <Suspense fallback={<PortfolioGridSkeleton />}>
-              {isClient && <PortfolioGrid selectedCategory={selectedCategory} />}
+              {isClient && <PortfolioGrid selectedCategory={selectedCategory || undefined} />}
             </Suspense>
           </ErrorBoundary>
         </div>
