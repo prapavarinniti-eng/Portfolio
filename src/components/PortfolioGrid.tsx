@@ -105,20 +105,12 @@ const PortfolioItem = memo<PortfolioItemProps>(({ image, onImageClick }) => {
           </span>
         </div>
         
-        {/* Title and description overlay - visible on hover/focus or mobile */}
+        {/* Title overlay - visible on hover/focus or mobile */}
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 flex items-end">
           <div className="p-3 w-full">
-            <h3 className="font-semibold text-white mb-1 text-sm" title={image.title}>
+            <h3 className="font-semibold text-white text-sm" title={image.title}>
               {image.title}
             </h3>
-            {image.description && (
-              <p 
-                className="text-xs text-gray-200 line-clamp-2"
-                title={image.description}
-              >
-                {image.description}
-              </p>
-            )}
           </div>
         </div>
       </div>
@@ -171,7 +163,7 @@ const ImageModal = memo<ImageModalProps>(({ image, onClose }) => {
       role="dialog"
       aria-modal="true"
       aria-labelledby="modal-title"
-      aria-describedby="modal-description"
+      aria-describedby="modal-title"
     >
       <div className="relative max-w-4xl max-h-full">
         <button
