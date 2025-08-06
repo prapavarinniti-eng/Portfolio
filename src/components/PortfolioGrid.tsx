@@ -181,18 +181,16 @@ const ImageModal = memo<ImageModalProps>(({ image, onClose }) => {
         </button>
         
         <div className="relative">
-          <Image
+          <img
             src={imageError ? '/placeholder.svg' : image.image_url}
             alt={image.title}
-            width={800}
-            height={600}
             className="max-w-full max-h-[80vh] object-contain rounded-lg"
             onError={handleImageError}
-            priority
-            quality={85}
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 800px"
-            placeholder="blur"
-            blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyEkJyTkqB+lUqfc7unEVn2nh/W36ZpHOGXjbOBkdnlqdqk7tpJWsknW1nYZMmLkc4U4ynqOKxFKC8v1stKpyZLUg"
+            style={{
+              maxWidth: '100%',
+              height: 'auto',
+              maxHeight: '80vh'
+            }}
           />
           
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-6 rounded-b-lg">

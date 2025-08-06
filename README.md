@@ -8,7 +8,8 @@
 ### 🌐 **Production URL:** https://portfolio-yap6.onrender.com  
 ### ⚡ **Status:** Live, 96 Images, New Category System  
 ### 🛡️ **Monitoring:** 24/7 Anti-Sleep System Active
-### 🔄 **Last Major Update:** August 6, 2025
+### 🔄 **Last Major Update:** August 6, 2025  
+### ✨ **Latest Feature:** Selective Upload System (August 6, 2025)
 
 ---
 
@@ -58,31 +59,46 @@
 - **🎨 New Category System** - รูปภาพของโต๊ะอาหาร, รูปภาพอาหาร, รูปภาพบรรยากาศงาน, รูปภาพเมนูพิเศษ  
 - **📱 Mobile Optimized** - Overlay system, ไม่มีข้อความบังภาพ
 - **⚡ Fast Modal Loading** - 800x600 optimized images, blur placeholder
-- **🛡️ Admin System** - CLI tools พร้อม Category Mapping
+- **🛡️ Enhanced Admin System** - Interactive CLI + Selective Upload/Delete ⭐ ใหม่!
+- **🎯 Selective Operations** - เลือกรูปเฉพาะในการอัพโหลด/ลบ ⭐ ใหม่!
 - **🔄 Auto-Deploy** - GitHub integration active
 
 ---
 
-## 🎯 **Image Management System - อัพเดตใหม่**
+## 🎯 **Advanced Image Management System - อัพเดตใหม่ล่าสุด**
 
-### 📤 **Primary Method: Bulk Upload (แนะนำ)**
+### 📤 **Enhanced Upload Options (ใหม่!)**
+
+#### **Option 1: Interactive Admin Interface (แนะนำ)**
 ```bash
-# อัพโหลดรูปใหม่ (วิธีหลัก)
-node bulk-image-upload.js
+npm run admin
+# เลือก 2. 📤 อัพโหลดรูปจากโฟลเดอร์
+# เลือก 1. อัพโหลดทั้งหมด (bulk upload)
+# หรือ  2. เลือกรูปเฉพาะอัน (selective upload) ⭐ ใหม่!
 ```
 
-**Features:**
-- ✅ อ่านรูปจากทุกโฟลเดอร์ใน `public/image/`
-- ✅ จัดหมวดหมู่อัตโนมัติตามโฟลเดอร์
-- ✅ สร้างชื่อและคำอธิบายสำหรับแต่ละรูป
-- ✅ บันทึกลงฐานข้อมูล Supabase
-- ✅ **ปลอดภัย:** ไม่ลบรูปเก่า เพิ่มเฉพาะรูปใหม่
+#### **Option 2: Direct Commands**
+```bash
+# Bulk Upload - อัพโหลดรูปทั้งหมด
+node bulk-image-upload.js
+
+# Selective Upload - เลือกรูปเฉพาะอัน (ใหม่!)
+npm run admin:selective
+```
+
+### 🌟 **NEW: Selective Upload Features**
+- ✅ **แสดงรายการรูป** พร้อมหมายเลข, โฟลเดอร์, หมวดหมู่
+- ✅ **เลือกได้หลายแบบ:** `1,3,5` หรือ `1-10` หรือ `all`
+- ✅ **ตรวจสอบซ้ำอัตโนมัติ** - ข้ามรูปที่มีอยู่แล้ว
+- ✅ **รายงานสถิติ** - นับรูปที่อัพโหลดและข้าม
+- ✅ **ยืนยันก่อนอัพโหลด** - แสดงรายการที่เลือก
 
 ### 🔧 **Supporting CLI Tools**
 ```bash
-npm run admin:stats    # ดูสถิติปัจจุบัน (96 รูป)
-npm run admin:clear    # ลบรูปทั้งหมด (ใช้ระวัง!)
-npm run admin:help     # ดูคำสั่งที่มี
+npm run admin:stats      # ดูสถิติปัจจุบัน (96 รูป)
+npm run admin:selective  # เลือกอัพโหลดรูปเฉพาะ (ใหม่!)
+npm run admin:clear      # ลบรูปทั้งหมด (ใช้ระวัง!)
+npm run admin:help       # ดูคำสั่งที่มี
 ```
 
 ### 🌐 **Web Admin Dashboard (Secondary)**
@@ -147,6 +163,14 @@ special-dishes → [snack-box]
 ---
 
 ## 🎊 **Major Achievements & Updates**
+
+### 🌟 **Latest Update (August 6, 2025) - Advanced Admin Features:**
+- [x] **Selective Upload System:** เลือกอัพโหลดรูปเฉพาะที่ต้องการ
+- [x] **Selective Delete System:** เลือกลบรูปเฉพาะรายการ
+- [x] **Enhanced Admin Interface:** Menu แบบ Interactive ที่ใช้งานง่าย
+- [x] **Flexible Selection:** รองรับ `1,3,5`, `1-10`, `all` formats
+- [x] **Duplicate Prevention:** ตรวจสอบและข้ามรูปซ้ำอัตโนมัติ
+- [x] **Operation Statistics:** รายงานผลการทำงานแบบละเอียด
 
 ### 🆕 **New Category System (August 2025):**
 - [x] **4 หมวดใหม่:** โต๊ะอาหาร, อาหาร, บรรยากาศงาน, เมนูพิเศษ
@@ -425,13 +449,18 @@ npm run dev
 - ✅ **Fast Loading** Modal เร็วขึ้น 3 เท่า
 - ✅ **Admin Tools** พร้อมใช้งาน
 
-### 🔧 **Add New Images:**
+### 🔧 **Add New Images (Updated!):**
 ```bash
 # 1. Copy ใส่โฟลเดอร์ที่ต้องการ
 cp new-photos/* public/image/01-weddings/
 
-# 2. อัปโหลดเข้าฐานข้อมูล
-node bulk-image-upload.js
+# 2. อัปโหลดเข้าฐานข้อมูล (เลือก 1 วิธี)
+# วิธี A: Interactive Menu (แนะนำ)
+npm run admin  # เลือก 2 → เลือก 2 (selective)
+
+# วิธี B: Direct Commands
+node bulk-image-upload.js      # อัปโหลดทั้งหมด
+npm run admin:selective        # เลือกเฉพาะรูป (ใหม่!)
 
 # 3. Check ผลลัพธ์
 npm run admin:stats
@@ -473,10 +502,12 @@ npm run admin:stats
 - ✅ **Type Safety:** Full TypeScript coverage
 - ✅ **Caching:** 5-minute cache for performance
 
-### 🛠️ **Admin & Management**
-- ✅ **CLI Tools:** bulk-image-upload.js (primary)
+### 🛠️ **Admin & Management (Enhanced!)**
+- ✅ **Interactive CLI:** npm run admin (7 options available) ⭐ ใหม่!
+- ✅ **Selective Operations:** Upload/Delete specific images ⭐ ใหม่!
 - ✅ **Web Admin:** https://portfolio-yap6.onrender.com/admin
-- ✅ **Statistics:** npm run admin:stats
+- ✅ **Advanced Statistics:** npm run admin:stats
+- ✅ **Duplicate Detection:** Automatic prevention system ⭐ ใหม่!
 - ✅ **Documentation:** Comprehensive guides
 - ✅ **Security:** Safe operations, no auto-scripts
 
@@ -548,10 +579,12 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ### 🔄 **Major Changes (August 6, 2025):**
 1. **New Category System:** 4 หมวดใหม่แทน 9 หมวดเก่า
 2. **Category Mapping:** UI-to-Database automatic conversion
-3. **Mobile UX Fix:** Overlay system แทนข้อความใต้รูป
-4. **Performance:** Modal loading 3x เร็วขึ้น
-5. **Code Cleanup:** ลบไฟล์อันตราย 31 files
-6. **Database:** Clean migration 290 → 96 records
+3. **Selective Upload/Delete System:** เลือกรูปเฉพาะในการอัพโหลด/ลบ ⭐ ใหม่!
+4. **Enhanced Admin Interface:** Interactive CLI menu with 7 options ⭐ ใหม่!
+5. **Mobile UX Fix:** Overlay system แทนข้อความใต้รูป
+6. **Performance:** Modal loading 3x เร็วขึ้น
+7. **Code Cleanup:** ลบไฟล์อันตราย 31 files
+8. **Database:** Clean migration 290 → 96 records
 
 ### 📝 **Documentation Updated:**
 - ✅ README.md (comprehensive overhaul)
@@ -559,7 +592,8 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 - ✅ Code comments และ type definitions
 
 ### 🎯 **Next Steps (Optional):**
-- Add more images using `node bulk-image-upload.js`
+- Add more images using `npm run admin:selective` (recommended) or `node bulk-image-upload.js`
+- Use selective delete to remove unwanted images: `npm run admin` → option 6
 - Monitor performance metrics
 - Consider adding image search functionality
 - Implement user analytics
@@ -569,5 +603,15 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 **🎉 Fuzio Catering Portfolio - เสร็จสมบูรณ์และ LIVE แล้ว!**
 
 *อัพเดตครั้งใหญ่: 6 สิงหาคม 2568*  
-*สถานะ: ✅ Live Production + New Category System + 96 Clean Images*  
+*สถานะ: ✅ Live Production + Advanced Admin System + Selective Operations ⭐*  
 *URL: https://portfolio-yap6.onrender.com*
+
+---
+
+## 🚀 **Quick Start Commands**
+```bash
+npm run admin              # เมนู admin แบบ interactive (แนะนำ)
+npm run admin:selective    # เลือกอัพโหลดรูปเฉพาะ (ใหม่!)
+npm run admin:stats        # ดูสถิติรูปปัจจุบัน
+node bulk-image-upload.js  # อัพโหลดรูปทั้งหมด (แบบเดิม)
+```
