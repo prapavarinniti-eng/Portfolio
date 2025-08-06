@@ -155,16 +155,44 @@ export default function Contact() {
       {/* Contact Content */}
       <div className="pt-24 pb-16 relative z-10">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-orange-500 to-red-500 rounded-full mb-6 animate-bounce">
-              <span className="text-2xl">📞</span>
+          <div className="text-center mb-16 relative">
+            {/* Floating decorative elements */}
+            <div className="absolute -top-10 left-1/2 transform -translate-x-1/2">
+              <div className="flex space-x-4 animate-float">
+                <div className="w-3 h-3 bg-orange-400 rounded-full opacity-60 animate-pulse"></div>
+                <div className="w-2 h-2 bg-red-400 rounded-full opacity-40 animate-pulse delay-300"></div>
+                <div className="w-4 h-4 bg-yellow-400 rounded-full opacity-50 animate-pulse delay-700"></div>
+              </div>
             </div>
-            <h1 className="text-5xl lg:text-6xl font-bold bg-gradient-to-r from-orange-600 via-red-500 to-orange-600 bg-clip-text text-transparent mb-6 animate-fade-in">
-              ติดต่อเรา
-            </h1>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
-              พร้อมให้บริการและปรึกษาฟรี • ตอบกลับรวดเร็วภายใน 24 ชั่วโมง
-            </p>
+
+            <div className="relative inline-block mb-8">
+              <div className="absolute inset-0 bg-gradient-to-r from-orange-400 to-red-500 rounded-full blur-xl opacity-30 scale-110 animate-pulse"></div>
+              <div className="relative inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-orange-500 via-red-500 to-pink-500 rounded-full shadow-2xl transform hover:scale-110 transition-all duration-500">
+                <span className="text-3xl animate-bounce">📞</span>
+                <div className="absolute -inset-2 bg-gradient-to-r from-orange-400 to-red-500 rounded-full opacity-20 animate-ping"></div>
+              </div>
+            </div>
+
+            <div className="relative mb-8">
+              <h1 className="text-6xl lg:text-7xl xl:text-8xl font-black bg-gradient-to-r from-orange-600 via-red-500 via-pink-500 to-orange-600 bg-clip-text text-transparent mb-4 animate-fade-in leading-tight tracking-tight">
+                <span className="inline-block transform hover:scale-110 transition-transform duration-300 cursor-default">ติด</span>
+                <span className="inline-block transform hover:scale-110 transition-transform duration-300 delay-100 cursor-default">ต่อ</span>
+                <span className="inline-block transform hover:scale-110 transition-transform duration-300 delay-200 cursor-default">เรา</span>
+              </h1>
+              <div className="absolute -inset-4 bg-gradient-to-r from-orange-200/20 via-transparent to-red-200/20 blur-3xl -z-10"></div>
+            </div>
+
+            <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-6 border border-orange-100/50 shadow-lg max-w-3xl mx-auto">
+              <p className="text-xl lg:text-2xl text-gray-700 font-medium leading-relaxed mb-4">
+                <span className="text-orange-600 font-semibold">🚀 พร้อมให้บริการ</span> และ 
+                <span className="text-red-600 font-semibold">💬 ปรึกษาฟรี</span>
+              </p>
+              <p className="text-lg text-gray-600 flex items-center justify-center gap-2">
+                <span className="animate-pulse">⚡</span>
+                ตอบกลับรวดเร็วภายใน 24 ชั่วโมง
+                <span className="animate-pulse">⚡</span>
+              </p>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
