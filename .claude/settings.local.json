@@ -51,7 +51,9 @@
       "Bash(./setup-gemini-alias.bat)",
       "Bash(gemini-auto:*)",
       "Bash(npm run admin:clear:*)",
-      "Bash(npm run admin:upload:*)"
+      "Bash(npm run admin:upload:*)",
+      "Bash(npm run admin:*)",
+      "Bash(npx supabase-js-cli select:*)"
     ],
     "deny": []
   }

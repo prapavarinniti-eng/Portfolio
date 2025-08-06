@@ -57,16 +57,23 @@ function generateImageContent(category, index, filename) {
 }
 
 function getCategoryLabel(category) {
-  const labels = {
-    'wedding': 'งานแต่งงาน',
-    'corporate': 'งานองค์กร',
-    'fine-dining': 'ไฟน์ไดนิ่ง',
-    'buffet': 'บุฟเฟ่ต์',
-    'cocktail': 'ค็อกเทล',
-    'coffee-break': 'คอฟฟี่เบรค',
-    'snack-box': 'สแน็คบ็อกซ์'
+  // ใช้ระบบ UI Category Mapping เหมือนกับ PortfolioGrid
+  const categoryLabels = {
+    // New UI categories (แสดงเป็น 4 หมวดใหม่)
+    'buffet-table': 'รูปภาพของโต๊ะอาหาร',
+    'food-plating': 'รูปภาพอาหาร', 
+    'event-atmosphere': 'รูปภาพบรรยากาศงาน',
+    'special-dishes': 'รูปภาพเมนูหรืออาหารพิเศษ',
+    // Legacy database categories → UI categories
+    'wedding': 'รูปภาพบรรยากาศงาน',
+    'corporate': 'รูปภาพของโต๊ะอาหาร',
+    'fine-dining': 'รูปภาพอาหาร',
+    'buffet': 'รูปภาพของโต๊ะอาหาร',
+    'cocktail': 'รูปภาพอาหาร',
+    'coffee-break': 'รูปภาพอาหาร',
+    'snack-box': 'รูปภาพเมนูหรืออาหารพิเศษ'
   };
-  return labels[category] || category;
+  return categoryLabels[category] || category;
 }
 
 function parseSelection(selection, maxNum) {
