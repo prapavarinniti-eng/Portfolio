@@ -31,6 +31,10 @@
     "gemini:push": "node gemini-hook.js",
     "gemini": "powershell -ExecutionPolicy Bypass -File ./gemini-autopush.ps1",
     "admin:help": "node quick-admin.js help",
+    "easy:reset": "node easy-reset.js",
+    "easy:upload": "node easy-upload.js",
+    "easy:remove-duplicates": "node easy-remove-duplicates.js",
+    "easy:check-duplicates": "node check-duplicates.js",
     "keepalive": "node keep-alive.js",
     "cron:keepalive": "node cron-keepalive.js"
   },

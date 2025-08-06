@@ -1,12 +1,70 @@
 'use client';
 
 import Link from 'next/link';
+import { useState } from 'react';
 
 export default function Contact() {
+  const [formData, setFormData] = useState({
+    name: '',
+    phone: '',
+    email: '',
+    eventType: '',
+    message: ''
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    
+    try {
+      const response = await fetch('/api/inquiries', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'เกิดข้อผิดพลาด');
+      }
+
+      setSubmitted(true);
+      setTimeout(() => {
+        setSubmitted(false);
+        setFormData({ name: '', phone: '', email: '', eventType: '', message: '' });
+      }, 4000);
+
+    } catch (error) {
+      console.error('Form submission error:', error);
+      alert(error instanceof Error ? error.message : 'เกิดข้อผิดพลาดในการส่งข้อมูล กรุณาลองใหม่อีกครั้ง');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    setFormData(prev => ({
+      ...prev,
+      [e.target.name]: e.target.value
+    }));
+  };
+
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50 relative overflow-hidden">
+      {/* Animated background elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-4 -left-4 w-72 h-72 bg-gradient-to-r from-orange-300/20 to-red-300/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute top-1/2 -right-8 w-96 h-96 bg-gradient-to-r from-red-300/20 to-orange-300/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div className="absolute bottom-0 left-1/3 w-64 h-64 bg-gradient-to-r from-orange-400/10 to-red-400/10 rounded-full blur-3xl animate-pulse delay-2000"></div>
+      </div>
+
       {/* Navigation */}
-      <nav className="bg-white/95 backdrop-blur-md shadow-lg fixed w-full z-50 border-b border-orange-100">
+      <nav className="bg-white/80 backdrop-blur-xl shadow-lg fixed w-full z-50 border-b border-orange-100/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
@@ -95,151 +153,362 @@ export default function Contact() {
       </nav>
 
       {/* Contact Content */}
-      <div className="pt-20 pb-16">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">ติดต่อเรา</h1>
-            <p className="text-xl text-gray-600">พร้อมให้บริการและปรึกษาฟรี</p>
+      <div className="pt-24 pb-16 relative z-10">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-orange-500 to-red-500 rounded-full mb-6 animate-bounce">
+              <span className="text-2xl">📞</span>
+            </div>
+            <h1 className="text-5xl lg:text-6xl font-bold bg-gradient-to-r from-orange-600 via-red-500 to-orange-600 bg-clip-text text-transparent mb-6 animate-fade-in">
+              ติดต่อเรา
+            </h1>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+              พร้อมให้บริการและปรึกษาฟรี • ตอบกลับรวดเร็วภายใน 24 ชั่วโมง
+            </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
             {/* Contact Form */}
-            <div>
-              <h2 className="text-2xl font-semibold text-gray-900 mb-6">ส่งข้อความถึงเรา</h2>
-              <form className="space-y-6">
-                <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-                    ชื่อ-นามสกุล
-                  </label>
-                  <input
-                    type="text"
-                    id="name"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                    placeholder="กรุณากรอกชื่อ-นามสกุล"
-                  />
-                </div>
+            <div className="relative">
+              <div className="bg-white/70 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 lg:p-10 relative overflow-hidden">
+                {/* Form background decoration */}
+                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-orange-400/10 to-red-400/10 rounded-full -translate-y-16 translate-x-16"></div>
+                <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-red-400/10 to-orange-400/10 rounded-full translate-y-12 -translate-x-12"></div>
+                
+                <div className="relative z-10">
+                  <h2 className="text-3xl font-bold text-gray-900 mb-2 flex items-center">
+                    <span className="mr-3">💬</span>
+                    ส่งข้อความถึงเรา
+                  </h2>
+                  <p className="text-gray-600 mb-8">เราจะติดต่อกลับโดยเร็วที่สุด</p>
+                  
+                  {submitted ? (
+                    <div className="text-center py-12 animate-fade-in">
+                      <div className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce">
+                        <span className="text-3xl text-white">✓</span>
+                      </div>
+                      <h3 className="text-2xl font-semibold text-green-600 mb-2">ส่งข้อความสำเร็จ!</h3>
+                      <p className="text-gray-600">เราจะติดต่อกลับภายใน 24 ชั่วโมง</p>
+                    </div>
+                  ) : (
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                      <div className="group">
+                        <label htmlFor="name" className="block text-sm font-semibold text-gray-700 mb-3 flex items-center">
+                          <span className="mr-2">👤</span>
+                          ชื่อ-นามสกุล
+                        </label>
+                        <input
+                          type="text"
+                          id="name"
+                          name="name"
+                          value={formData.name}
+                          onChange={handleInputChange}
+                          required
+                          className="w-full px-5 py-4 bg-white/50 border-2 border-gray-200/50 rounded-2xl focus:ring-4 focus:ring-orange-500/20 focus:border-orange-500 transition-all duration-300 placeholder-gray-400 backdrop-blur-sm group-hover:border-orange-300"
+                          placeholder="กรุณากรอกชื่อ-นามสกุล"
+                        />
+                      </div>
 
-                <div>
-                  <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
-                    เบอร์โทรศัพท์
-                  </label>
-                  <input
-                    type="tel"
-                    id="phone"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                    placeholder="081-234-5678"
-                  />
-                </div>
+                      <div className="group">
+                        <label htmlFor="phone" className="block text-sm font-semibold text-gray-700 mb-3 flex items-center">
+                          <span className="mr-2">📱</span>
+                          เบอร์โทรศัพท์
+                        </label>
+                        <input
+                          type="tel"
+                          id="phone"
+                          name="phone"
+                          value={formData.phone}
+                          onChange={handleInputChange}
+                          required
+                          className="w-full px-5 py-4 bg-white/50 border-2 border-gray-200/50 rounded-2xl focus:ring-4 focus:ring-orange-500/20 focus:border-orange-500 transition-all duration-300 placeholder-gray-400 backdrop-blur-sm group-hover:border-orange-300"
+                          placeholder="081-234-5678"
+                        />
+                      </div>
 
-                <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                    อีเมล
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                    placeholder="example@email.com"
-                  />
-                </div>
+                      <div className="group">
+                        <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-3 flex items-center">
+                          <span className="mr-2">📧</span>
+                          อีเมล
+                        </label>
+                        <input
+                          type="email"
+                          id="email"
+                          name="email"
+                          value={formData.email}
+                          onChange={handleInputChange}
+                          required
+                          className="w-full px-5 py-4 bg-white/50 border-2 border-gray-200/50 rounded-2xl focus:ring-4 focus:ring-orange-500/20 focus:border-orange-500 transition-all duration-300 placeholder-gray-400 backdrop-blur-sm group-hover:border-orange-300"
+                          placeholder="example@email.com"
+                        />
+                      </div>
 
-                <div>
-                  <label htmlFor="event-type" className="block text-sm font-medium text-gray-700 mb-2">
-                    ประเภทงาน
-                  </label>
-                  <select
-                    id="event-type"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                  >
-                    <option value="">เลือกประเภทงาน</option>
-                    <option value="wedding">งานแต่งงาน</option>
-                    <option value="merit">งานบุญ</option>
-                    <option value="corporate">งานบริษัท</option>
-                    <option value="birthday">งานวันเกิด</option>
-                    <option value="graduation">งานรับปริญญา</option>
-                    <option value="other">อื่นๆ</option>
-                  </select>
-                </div>
+                      <div className="group">
+                        <label htmlFor="eventType" className="block text-sm font-semibold text-gray-700 mb-3 flex items-center">
+                          <span className="mr-2">🎉</span>
+                          ประเภทงาน
+                        </label>
+                        <select
+                          id="eventType"
+                          name="eventType"
+                          value={formData.eventType}
+                          onChange={handleInputChange}
+                          required
+                          className="w-full px-5 py-4 bg-white/50 border-2 border-gray-200/50 rounded-2xl focus:ring-4 focus:ring-orange-500/20 focus:border-orange-500 transition-all duration-300 backdrop-blur-sm group-hover:border-orange-300 cursor-pointer"
+                        >
+                          <option value="">เลือกประเภทงาน</option>
+                          <option value="wedding">💒 งานแต่งงาน</option>
+                          <option value="merit">🙏 งานบุญ</option>
+                          <option value="corporate">🏢 งานบริษัท</option>
+                          <option value="birthday">🎂 งานวันเกิด</option>
+                          <option value="graduation">🎓 งานรับปริญญา</option>
+                          <option value="other">✨ อื่นๆ</option>
+                        </select>
+                      </div>
 
-                <div>
-                  <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
-                    รายละเอียด
-                  </label>
-                  <textarea
-                    id="message"
-                    rows={4}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                    placeholder="กรุณาระบุรายละเอียดงาน วันที่ เวลา จำนวนคน และความต้องการพิเศษ"
-                  ></textarea>
-                </div>
+                      <div className="group">
+                        <label htmlFor="message" className="block text-sm font-semibold text-gray-700 mb-3 flex items-center">
+                          <span className="mr-2">📝</span>
+                          รายละเอียด
+                        </label>
+                        <textarea
+                          id="message"
+                          name="message"
+                          value={formData.message}
+                          onChange={handleInputChange}
+                          rows={5}
+                          required
+                          className="w-full px-5 py-4 bg-white/50 border-2 border-gray-200/50 rounded-2xl focus:ring-4 focus:ring-orange-500/20 focus:border-orange-500 transition-all duration-300 placeholder-gray-400 backdrop-blur-sm group-hover:border-orange-300 resize-none"
+                          placeholder="กรุณาระบุรายละเอียดงาน วันที่ เวลา จำนวนคน และความต้องการพิเศษ"
+                        ></textarea>
+                      </div>
 
-                <button
-                  type="submit"
-                  className="w-full bg-orange-600 hover:bg-orange-700 text-white py-3 px-6 rounded-lg font-medium transition-colors"
-                >
-                  ส่งข้อความ
-                </button>
-              </form>
+                      <button
+                        type="submit"
+                        disabled={isSubmitting}
+                        className="group relative w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 disabled:from-gray-400 disabled:to-gray-500 text-white py-4 px-8 rounded-2xl font-bold text-lg transition-all duration-300 transform hover:scale-[1.02] hover:shadow-2xl disabled:transform-none disabled:cursor-not-allowed overflow-hidden"
+                      >
+                        <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        <div className="relative flex items-center justify-center">
+                          {isSubmitting ? (
+                            <>
+                              <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin mr-3"></div>
+                              กำลังส่ง...
+                            </>
+                          ) : (
+                            <>
+                              <span className="mr-2">🚀</span>
+                              ส่งข้อความ
+                            </>
+                          )}
+                        </div>
+                      </button>
+                    </form>
+                  )}
+                </div>
             </div>
 
             {/* Contact Information */}
-            <div>
-              <h2 className="text-2xl font-semibold text-gray-900 mb-6">ข้อมูลการติดต่อ</h2>
-              
-              <div className="space-y-6">
-                <div className="flex items-start">
-                  <div className="flex-shrink-0 w-6 h-6 text-orange-600 mt-1">
-                    📞
-                  </div>
-                  <div className="ml-4">
-                    <h3 className="text-lg font-medium text-gray-900">โทรศัพท์</h3>
-                    <p className="text-gray-600">081-234-5678</p>
-                    <p className="text-sm text-gray-500">เปิดให้บริการ 8:00 - 20:00 น.</p>
-                  </div>
-                </div>
+            <div className="space-y-8">
+              <div className="bg-white/70 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 lg:p-10 relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-40 h-40 bg-gradient-to-br from-red-400/10 to-orange-400/10 rounded-full -translate-y-20 -translate-x-20"></div>
+                
+                <div className="relative z-10">
+                  <h2 className="text-3xl font-bold text-gray-900 mb-2 flex items-center">
+                    <span className="mr-3">📋</span>
+                    ข้อมูลการติดต่อ
+                  </h2>
+                  <p className="text-gray-600 mb-8">ช่องทางการติดต่อหลากหลาย เลือกที่สะดวกที่สุด</p>
+                  
+                  <div className="space-y-6">
+                    <div className="group flex items-start p-4 rounded-2xl hover:bg-orange-50/50 transition-all duration-300 cursor-pointer">
+                      <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-full flex items-center justify-center text-xl group-hover:scale-110 transition-transform duration-300">
+                        📞
+                      </div>
+                      <div className="ml-4 flex-1">
+                        <h3 className="text-xl font-bold text-gray-900 mb-1">โทรศัพท์</h3>
+                        <p className="text-lg font-semibold text-orange-600">065-716-5037</p>
+                        <p className="text-sm text-gray-500 flex items-center mt-1">
+                          <span className="mr-2">🕐</span>
+                          เปิดให้บริการ 8:00 - 20:00 น.
+                        </p>
+                      </div>
+                      <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <span className="text-orange-500">→</span>
+                      </div>
+                    </div>
 
-                <div className="flex items-start">
-                  <div className="flex-shrink-0 w-6 h-6 text-orange-600 mt-1">
-                    📧
-                  </div>
-                  <div className="ml-4">
-                    <h3 className="text-lg font-medium text-gray-900">อีเมล</h3>
-                    <p className="text-gray-600">info@fuziocatering.com</p>
-                    <p className="text-sm text-gray-500">ตอบกลับภายใน 24 ชั่วโมง</p>
-                  </div>
-                </div>
+                    <div className="group flex items-start p-4 rounded-2xl hover:bg-orange-50/50 transition-all duration-300 cursor-pointer">
+                      <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-full flex items-center justify-center text-xl group-hover:scale-110 transition-transform duration-300">
+                        📧
+                      </div>
+                      <div className="ml-4 flex-1">
+                        <h3 className="text-xl font-bold text-gray-900 mb-1">อีเมล</h3>
+                        <p className="text-lg font-semibold text-blue-600">info@fuziocatering.com</p>
+                        <p className="text-sm text-gray-500 flex items-center mt-1">
+                          <span className="mr-2">⚡</span>
+                          ตอบกลับภายใน 24 ชั่วโมง
+                        </p>
+                      </div>
+                      <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <span className="text-blue-500">→</span>
+                      </div>
+                    </div>
 
-                <div className="flex items-start">
-                  <div className="flex-shrink-0 w-6 h-6 text-orange-600 mt-1">
-                    💬
-                  </div>
-                  <div className="ml-4">
-                    <h3 className="text-lg font-medium text-gray-900">Line</h3>
-                    <p className="text-gray-600">@fuziocatering</p>
-                    <p className="text-sm text-gray-500">ปรึกษาฟรี ตอบรวดเร็ว</p>
-                  </div>
-                </div>
+                    <div className="group flex items-start p-4 rounded-2xl hover:bg-orange-50/50 transition-all duration-300 cursor-pointer">
+                      <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-full flex items-center justify-center text-xl group-hover:scale-110 transition-transform duration-300">
+                        💬
+                      </div>
+                      <div className="ml-4 flex-1">
+                        <h3 className="text-xl font-bold text-gray-900 mb-1">Line</h3>
+                        <p className="text-lg font-semibold text-green-600">@fuziocatering</p>
+                        <p className="text-sm text-gray-500 flex items-center mt-1">
+                          <span className="mr-2">💚</span>
+                          ปรึกษาฟรี ตอบรวดเร็ว
+                        </p>
+                      </div>
+                      <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <span className="text-green-500">→</span>
+                      </div>
+                    </div>
 
-                <div className="flex items-start">
-                  <div className="flex-shrink-0 w-6 h-6 text-orange-600 mt-1">
-                    📍
-                  </div>
-                  <div className="ml-4">
-                    <h3 className="text-lg font-medium text-gray-900">พื้นที่ให้บริการ</h3>
-                    <p className="text-gray-600">กรุงเทพและปริมณฑล</p>
-                    <p className="text-sm text-gray-500">ต่างจังหวัดสามารถปรึกษาได้</p>
+                    <div className="group flex items-start p-4 rounded-2xl hover:bg-orange-50/50 transition-all duration-300">
+                      <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full flex items-center justify-center text-xl group-hover:scale-110 transition-transform duration-300">
+                        📍
+                      </div>
+                      <div className="ml-4 flex-1">
+                        <h3 className="text-xl font-bold text-gray-900 mb-1">พื้นที่ให้บริการ</h3>
+                        <p className="text-lg font-semibold text-purple-600">กรุงเทพและปริมณฑล</p>
+                        <p className="text-sm text-gray-500 flex items-center mt-1">
+                          <span className="mr-2">🚗</span>
+                          ต่างจังหวัดสามารถปรึกษาได้
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              <div className="mt-8 p-6 bg-orange-50 rounded-lg">
-                <h3 className="text-lg font-medium text-gray-900 mb-2">💡 เคล็ดลับการสั่งจ้าง</h3>
-                <ul className="text-sm text-gray-600 space-y-1">
-                  <li>• จองล่วงหน้าอย่างน้อย 7 วัน</li>
-                  <li>• แจ้งจำนวนคนที่แน่นอน</li>
-                  <li>• ระบุความต้องการพิเศษ</li>
-                  <li>• สอบถามราคาและเงื่อนไขชัดเจน</li>
-                </ul>
+              <div className="bg-gradient-to-br from-orange-50 to-red-50 backdrop-blur-xl rounded-3xl shadow-xl border border-orange-200/50 p-8 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-orange-300/20 to-red-300/20 rounded-full -translate-y-16 translate-x-16"></div>
+                
+                <div className="relative z-10">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-4 flex items-center">
+                    <span className="mr-3">💡</span>
+                    เคล็ดลับการสั่งจ้าง
+                  </h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="flex items-center p-3 bg-white/60 rounded-xl backdrop-blur-sm hover:bg-white/80 transition-all duration-300">
+                      <span className="text-2xl mr-3">📅</span>
+                      <span className="text-sm font-medium text-gray-700">จองล่วงหน้าอย่างน้อย 7 วัน</span>
+                    </div>
+                    <div className="flex items-center p-3 bg-white/60 rounded-xl backdrop-blur-sm hover:bg-white/80 transition-all duration-300">
+                      <span className="text-2xl mr-3">👥</span>
+                      <span className="text-sm font-medium text-gray-700">แจ้งจำนวนคนที่แน่นอน</span>
+                    </div>
+                    <div className="flex items-center p-3 bg-white/60 rounded-xl backdrop-blur-sm hover:bg-white/80 transition-all duration-300">
+                      <span className="text-2xl mr-3">✨</span>
+                      <span className="text-sm font-medium text-gray-700">ระบุความต้องการพิเศษ</span>
+                    </div>
+                    <div className="flex items-center p-3 bg-white/60 rounded-xl backdrop-blur-sm hover:bg-white/80 transition-all duration-300">
+                      <span className="text-2xl mr-3">💰</span>
+                      <span className="text-sm font-medium text-gray-700">สอบถามราคาและเงื่อนไขชัดเจน</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* FAQ Section */}
+          <div className="mt-20">
+            <div className="text-center mb-12">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full mb-6">
+                <span className="text-2xl">❓</span>
+              </div>
+              <h2 className="text-4xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent mb-4">
+                คำถามที่พบบ่อย
+              </h2>
+              <p className="text-xl text-gray-600">
+                คำตอบสำหรับคำถามที่ลูกค้าสอบถามบ่อยที่สุด
+              </p>
+            </div>
+
+            <div className="max-w-4xl mx-auto">
+              <div className="space-y-6">
+                {[
+                  {
+                    question: "📅 ควรจองล่วงหน้ากี่วัน?",
+                    answer: "แนะนำให้จองล่วงหน้าอย่างน้อย 7-14 วัน สำหรับงานใหญ่ เช่น งานแต่งงาน ควรจองล่วงหน้า 1 เดือน เพื่อให้เราเตรียมความพร้อมได้อย่างดีที่สุด"
+                  },
+                  {
+                    question: "💰 ราคาเริ่มต้นเท่าไหร่?",
+                    answer: "ราคาขึ้นอยู่กับประเภทงาน จำนวนคน และเมนูที่เลือก เริ่มต้นที่ 150 บาทต่อคน สำหรับเมนูมาตรฐาน สอบถามใบเสนอราคาฟรีได้ที่เบอร์ 065-716-5037"
+                  },
+                  {
+                    question: "🍽️ มีเมนูอาหารให้เลือกหรือไม่?",
+                    answer: "มีเมนูหลากหลายให้เลือก ทั้งอาหารไทย อาหารจีน อาหารญี่ปุ่น และอาหารนานาชาติ สามารถปรับแต่งเมนูตามความต้องการ และรองรับอาหารเจ อาหารฮาลาล"
+                  },
+                  {
+                    question: "📍 ให้บริการพื้นที่ไหนบ้าง?",
+                    answer: "ให้บริการหลักในกรุงเทพและปริมณฑล สำหรับต่างจังหวัดสามารถให้บริการได้ โดยมีค่าเดินทางเพิ่มเติม กรุณาติดต่อสอบถามรายละเอียด"
+                  },
+                  {
+                    question: "👥 รับจัดงานขั้นต่ำกี่คน?",
+                    answer: "รับจัดงานตั้งแต่ 20 คนขึ้นไป สำหรับงานขนาดเล็กกว่านี้ เรามีบริการ Snack Box และอาหารว่างที่สามารถสั่งได้ตั้งแต่ 10 กล่องขึ้นไป"
+                  },
+                  {
+                    question: "🎂 มีบริการเค้กและของหวานไหม?",
+                    answer: "มีบริการเค้ก ของหวาน และผลไม้ครบครัน สามารถออกแบบเค้กตามความต้องการ พร้อมบริการตัดเค้กในงาน และมีช่างภาพบันทึกภาพสำคัญ"
+                  }
+                ].map((faq, index) => (
+                  <div key={index} className="bg-white/70 backdrop-blur-xl rounded-2xl shadow-lg border border-white/20 overflow-hidden">
+                    <details className="group">
+                      <summary className="flex items-center justify-between p-6 cursor-pointer hover:bg-white/50 transition-colors">
+                        <h3 className="text-lg font-semibold text-gray-900 pr-4">
+                          {faq.question}
+                        </h3>
+                        <div className="flex-shrink-0 transform transition-transform group-open:rotate-180">
+                          <span className="text-2xl text-orange-500">⌄</span>
+                        </div>
+                      </summary>
+                      <div className="px-6 pb-6">
+                        <div className="pt-4 border-t border-gray-200/50">
+                          <p className="text-gray-700 leading-relaxed">
+                            {faq.answer}
+                          </p>
+                        </div>
+                      </div>
+                    </details>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-12 text-center">
+                <div className="bg-gradient-to-r from-orange-50 to-red-50 rounded-3xl p-8 border border-orange-200/50">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                    🤔 ไม่พบคำตอบที่ต้องการ?
+                  </h3>
+                  <p className="text-gray-600 mb-6">
+                    ติดต่อเราได้ทุกช่องทาง เราพร้อมตอบคำถามและให้คำปรึกษาฟรี
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a
+                      href="tel:065-716-5037"
+                      className="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-2xl font-semibold hover:from-orange-600 hover:to-red-600 transition-all duration-300 transform hover:scale-105"
+                    >
+                      <span className="mr-2">📞</span>
+                      โทรเลย 065-716-5037
+                    </a>
+                    <a
+                      href="mailto:info@fuziocatering.com"
+                      className="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-2xl font-semibold hover:from-blue-600 hover:to-purple-600 transition-all duration-300 transform hover:scale-105"
+                    >
+                      <span className="mr-2">📧</span>
+                      ส่งอีเมล
+                    </a>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -247,20 +516,61 @@ export default function Contact() {
       </div>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h3 className="text-2xl font-bold mb-4">Fuzio Catering</h3>
-          <div className="flex flex-col sm:flex-row justify-center items-center gap-8 mb-6">
-            <div className="flex items-center">
-              <span>📞 081-234-5678</span>
+      <footer className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white py-16 overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(251,146,60,0.1),transparent_70%)]"></div>
+        <div className="absolute top-0 left-1/4 w-2 h-full bg-gradient-to-b from-orange-500/20 to-transparent"></div>
+        <div className="absolute top-0 right-1/3 w-1 h-full bg-gradient-to-b from-red-500/20 to-transparent"></div>
+        
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-orange-500 to-red-500 rounded-full mb-6 animate-pulse">
+              <span className="text-3xl">🍽️</span>
             </div>
-            <div className="flex items-center">
-              <span>📧 info@fuziocatering.com</span>
+            <h3 className="text-4xl font-bold mb-4 bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent">
+              Fuzio Catering
+            </h3>
+            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+              ความอร่อยที่สร้างความประทับใจ ในทุกโอกาสพิเศษของคุณ
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+            <div className="text-center group">
+              <div className="w-16 h-16 bg-gradient-to-r from-orange-500/20 to-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                <span className="text-2xl">📞</span>
+              </div>
+              <h4 className="text-lg font-semibold mb-2">โทรหาเรา</h4>
+              <p className="text-orange-400 font-bold text-lg">065-716-5037</p>
+              <p className="text-sm text-gray-400">8:00 - 20:00 น.</p>
+            </div>
+            
+            <div className="text-center group">
+              <div className="w-16 h-16 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                <span className="text-2xl">📧</span>
+              </div>
+              <h4 className="text-lg font-semibold mb-2">อีเมล</h4>
+              <p className="text-blue-400 font-bold">info@fuziocatering.com</p>
+              <p className="text-sm text-gray-400">ตอบภายใน 24 ชม.</p>
+            </div>
+            
+            <div className="text-center group">
+              <div className="w-16 h-16 bg-gradient-to-r from-green-500/20 to-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                <span className="text-2xl">💬</span>
+              </div>
+              <h4 className="text-lg font-semibold mb-2">Line Chat</h4>
+              <p className="text-green-400 font-bold">@fuziocatering</p>
+              <p className="text-sm text-gray-400">ปรึกษาฟรี</p>
             </div>
           </div>
-          <p className="text-gray-400 text-sm">
-            © 2024 Fuzio Catering. All rights reserved.
-          </p>
+          
+          <div className="border-t border-gray-700 pt-8 text-center">
+            <p className="text-gray-400 text-sm mb-4">
+              © 2024 Fuzio Catering. สงวนลิขสิทธิ์ทุกประการ
+            </p>
+            <p className="text-xs text-gray-500">
+              ✨ ออกแบบและพัฒนาเพื่อมอบประสบการณ์การใช้งานที่ดีที่สุด
+            </p>
+          </div>
         </div>
       </footer>
     </div>
