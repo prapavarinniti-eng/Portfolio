@@ -224,6 +224,8 @@ async function uploadImages() {
     // Check all category folders for images
     const imageDir = path.join(__dirname, 'public', 'image');
     const categoryFolders = [
+      '01-buffet-table', '02-food-plating', '03-event-atmosphere', '04-special-dishes',
+      // Legacy folders for backward compatibility
       '01-weddings', '02-corporate-meetings', '03-fine-dining', 
       '04-buffet-service', '05-cocktail-reception', '06-coffee-break', 
       '07-snack-food-box', '08-government-events', '09-private-parties'

@@ -231,15 +231,10 @@ class AdminCommands {
   
   getCategoryLabel(category) {
     const labels = {
-      'wedding': 'งานแต่งงาน',
-      'corporate': 'งานบริษัท',
-      'buffet': 'บุฟเฟต์',
-      'cocktail': 'ค็อกเทล',
-      'fine-dining': 'ไฟน์ไดนิ่ง',
-      'coffee-break': 'คอฟฟี่เบรก',
-      'snack-box': 'สแน็คบ็อกซ์',
-      'government': 'งานภาครัฐ',
-      'signature': 'ซิกเนเจอร์'
+      'buffet-table': 'รูปภาพของโต๊ะอาหาร',
+      'food-plating': 'รูปภาพอาหาร',
+      'event-atmosphere': 'รูปภาพบรรยากาศงาน',
+      'special-dishes': 'รูปภาพเมนูหรืออาหารพิเศษ'
     };
     return labels[category] || category;
   }
