@@ -23,7 +23,7 @@
     "admin:selective": "node selective-upload.js",
     "admin:optimize": "node quick-admin.js optimize",
     "admin:clear": "node quick-admin.js clear",
-    "admin:delete": "node force-delete-selected.js",
+    "admin:delete": "node admin-commands.js",
     "git:push": "git add . && git commit -m \"Quick update: %date% %time%\" && git push origin master",
     "git:quick": "node auto-commit.js",
     "watch:push": "node watch-and-push.js",
