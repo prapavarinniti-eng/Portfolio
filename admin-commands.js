@@ -148,21 +148,47 @@ class AdminCommands {
   
   async uploadFromFolder() {
     console.log('📤 อัพโหลดรูปจากโฟลเดอร์\n');
+    console.log('เลือกรูปแบบการอัพโหลด:');
+    console.log('1. อัพโหลดทั้งหมด (bulk upload)');
+    console.log('2. เลือกรูปเฉพาะอัน (selective upload)');
+    console.log('0. ยกเลิก\n');
     
-    const { uploadImages } = require('./bulk-image-upload');
+    const choice = await this.question('เลือกหมายเลข (0-2): ');
     
-    const confirm = await this.question('ต้องการอัพโหลดรูปจากโฟลเดอร์ public/image ใช่หรือไม่? (yes/no): ');
-    
-    if (confirm.toLowerCase() !== 'yes' && confirm.toLowerCase() !== 'y') {
+    if (choice === '0') {
       console.log('❌ ยกเลิกการอัพโหลด');
       return;
     }
     
-    try {
-      console.log('🚀 เริ่มอัพโหลด...\n');
-      await uploadImages();
-    } catch (error) {
-      console.error('❌ Error:', error.message);
+    if (choice === '1') {
+      // Bulk upload - อัพโหลดทั้งหมด
+      const { uploadImages } = require('./bulk-image-upload');
+      
+      const confirm = await this.question('ต้องการอัพโหลดรูปทั้งหมดจากโฟลเดอร์ public/image ใช่หรือไม่? (yes/no): ');
+      
+      if (confirm.toLowerCase() !== 'yes' && confirm.toLowerCase() !== 'y') {
+        console.log('❌ ยกเลิกการอัพโหลด');
+        return;
+      }
+      
+      try {
+        console.log('🚀 เริ่มอัพโหลดทั้งหมด...\n');
+        await uploadImages();
+      } catch (error) {
+        console.error('❌ Error:', error.message);
+      }
+      
+    } else if (choice === '2') {
+      // Selective upload - เลือกรูปเฉพาะอัน
+      try {
+        const { selectiveUpload } = require('./selective-upload');
+        await selectiveUpload();
+      } catch (error) {
+        console.error('❌ Error:', error.message);
+      }
+      
+    } else {
+      console.log('❌ กรุณาเลือกหมายเลข 0-2');
     }
   }
   

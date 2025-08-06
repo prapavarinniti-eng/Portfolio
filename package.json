@@ -20,6 +20,7 @@
     "admin:new": "node admin-commands.js",
     "admin:stats": "node quick-admin.js stats",
     "admin:upload": "node quick-admin.js upload",
+    "admin:selective": "node selective-upload.js",
     "admin:optimize": "node quick-admin.js optimize",
     "admin:clear": "node quick-admin.js clear",
     "admin:delete": "node force-delete-selected.js",
