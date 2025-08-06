@@ -16,10 +16,19 @@ interface PortfolioGridProps {
  * Category labels mapping for Thai localization
  */
 const categoryLabels: Record<string, string> = {
+  // New categories mapping to old database categories
   'buffet-table': 'รูปภาพของโต๊ะอาหาร',
-  'food-plating': 'รูปภาพอาหาร',
+  'food-plating': 'รูปภาพอาหาร', 
   'event-atmosphere': 'รูปภาพบรรยากาศงาน',
-  'special-dishes': 'รูปภาพเมนูหรืออาหารพิเศษ'
+  'special-dishes': 'รูปภาพเมนูหรืออาหารพิเศษ',
+  // Legacy database categories
+  'wedding': 'รูปภาพบรรยากาศงาน',
+  'corporate': 'รูปภาพของโต๊ะอาหาร',
+  'fine-dining': 'รูปภาพอาหาร',
+  'buffet': 'รูปภาพของโต๊ะอาหาร',
+  'cocktail': 'รูปภาพอาหาร',
+  'coffee-break': 'รูปภาพอาหาร',
+  'snack-box': 'รูปภาพเมนูหรืออาหารพิเศษ'
 };
 
 /**

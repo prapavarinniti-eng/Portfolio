@@ -49,7 +49,9 @@
       "Bash(code:*)",
       "Bash(git config:*)",
       "Bash(./setup-gemini-alias.bat)",
-      "Bash(gemini-auto:*)"
+      "Bash(gemini-auto:*)",
+      "Bash(npm run admin:clear:*)",
+      "Bash(npm run admin:upload:*)"
     ],
     "deny": []
   }

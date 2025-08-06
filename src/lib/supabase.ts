@@ -23,13 +23,58 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
 })
 
 /**
- * Available portfolio categories
+ * Available portfolio categories (UI level)
  */
 export type PortfolioCategory = 
   | 'buffet-table'
   | 'food-plating' 
   | 'event-atmosphere' 
   | 'special-dishes'
+  | 'wedding'
+  | 'corporate'
+  | 'fine-dining'
+  | 'buffet'
+  | 'cocktail'
+  | 'coffee-break'
+  | 'snack-box'
+
+/**
+ * Database categories (legacy)
+ */
+type DatabaseCategory = 
+  | 'wedding'
+  | 'corporate'
+  | 'fine-dining'
+  | 'buffet'
+  | 'cocktail'
+  | 'coffee-break'
+  | 'snack-box'
+
+/**
+ * Map new UI categories to database categories
+ */
+const CATEGORY_MAPPING: Record<PortfolioCategory, DatabaseCategory[]> = {
+  'buffet-table': ['corporate', 'buffet'],
+  'food-plating': ['fine-dining', 'cocktail', 'coffee-break'],
+  'event-atmosphere': ['wedding'],
+  'special-dishes': ['snack-box']
+}
+
+/**
+ * Map database category to UI category
+ */
+function mapDatabaseToUI(dbCategory: string): PortfolioCategory {
+  const mapping: Record<string, PortfolioCategory> = {
+    'wedding': 'event-atmosphere',
+    'corporate': 'buffet-table',
+    'fine-dining': 'food-plating',
+    'buffet': 'buffet-table',
+    'cocktail': 'food-plating',
+    'coffee-break': 'food-plating',
+    'snack-box': 'special-dishes'
+  }
+  return mapping[dbCategory] || 'special-dishes'
+}
 
 /**
  * Portfolio image interface with proper typing
@@ -40,6 +85,18 @@ export interface PortfolioImage {
   description?: string | null
   image_url: string
   category: PortfolioCategory
+  created_at: string
+}
+
+/**
+ * Database image interface (with database category)
+ */
+interface DatabasePortfolioImage {
+  id: string
+  title: string
+  description?: string | null
+  image_url: string
+  category: string
   created_at: string
 }
 
@@ -107,7 +164,8 @@ export async function getPortfolioImages(
 
     // Apply category filter if specified
     if (category) {
-      query = query.eq('category', category)
+      const dbCategories = CATEGORY_MAPPING[category]
+      query = query.in('category', dbCategories)
     }
 
     const { data, error } = await query
@@ -116,7 +174,11 @@ export async function getPortfolioImages(
       throw new Error(`Failed to fetch portfolio images: ${error.message}`)
     }
 
-    const images = data || []
+    // Map database results to UI format
+    const images: PortfolioImage[] = (data as DatabasePortfolioImage[] || []).map(item => ({
+      ...item,
+      category: mapDatabaseToUI(item.category)
+    }))
     
     // Cache the results
     portfolioCache.set(cacheKey, images)
@@ -142,7 +204,8 @@ export async function getPortfolioImagesCount(category?: PortfolioCategory): Pro
       .select('*', { count: 'exact', head: true })
 
     if (category) {
-      query = query.eq('category', category)
+      const dbCategories = CATEGORY_MAPPING[category]
+      query = query.in('category', dbCategories)
     }
 
     const { count, error } = await query
