@@ -16,15 +16,10 @@ interface PortfolioGridProps {
  * Category labels mapping for Thai localization
  */
 const categoryLabels: Record<string, string> = {
-  'wedding': 'งานแต่งงาน',
-  'corporate': 'ประชุมองค์กร', 
-  'fine-dining': 'ไฟน์ไดนิ่ง',
-  'cocktail': 'ค็อกเทล',
-  'buffet': 'บุฟเฟ่ต์',
-  'snack-box': 'สแน็คบ็อกซ์',
-  'coffee-break': 'คอฟฟี่เบรค',
-  'government': 'งานภาครัฐ',
-  'signature': 'ซิกเนเจอร์'
+  'buffet-table': 'รูปภาพของโต๊ะอาหาร',
+  'food-plating': 'รูปภาพอาหาร',
+  'event-atmosphere': 'รูปภาพบรรยากาศงาน',
+  'special-dishes': 'รูปภาพเมนูหรืออาหารพิเศษ'
 };
 
 /**

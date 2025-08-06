@@ -26,14 +26,10 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
  * Available portfolio categories
  */
 export type PortfolioCategory = 
-  | 'wedding' 
-  | 'corporate' 
-  | 'fine-dining' 
-  | 'cocktail' 
-  | 'buffet' 
-  | 'food-stall' 
-  | 'snack-box' 
-  | 'coffee-break'
+  | 'buffet-table'
+  | 'food-plating' 
+  | 'event-atmosphere' 
+  | 'special-dishes'
 
 /**
  * Portfolio image interface with proper typing

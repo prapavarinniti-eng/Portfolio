@@ -9,14 +9,10 @@ interface CategoryFilterProps {
 
 const categories = [
   { value: '', label: 'ทั้งหมด', icon: '🍽️', description: 'ดูผลงานทั้งหมด' },
-  { value: 'wedding', label: 'งานแต่งงาน', icon: '💒', description: 'งานแต่งงานและงานส่วนตัว ระดับโรงแรม 5 ดาว' },
-  { value: 'corporate', label: 'ประชุมองค์กร', icon: '🏢', description: 'งานประชุมบริษัทและงานภาครัฐ Coffee Break ระดับผู้บริหาร' },
-  { value: 'fine-dining', label: 'ไฟน์ไดนิ่ง', icon: '🍾', description: 'Set Course Menu ระดับมิชลิน' },
-  { value: 'buffet', label: 'บุฟเฟ่ต์', icon: '🍛', description: 'บุฟเฟ่ต์หลากหลายเมนู Thai & International' },
-  { value: 'cocktail', label: 'ค็อกเทล', icon: '🍸', description: 'งานเลี้ยงค็อกเทล Welcome Drink & Canapé' },
-  { value: 'coffee-break', label: 'คอฟฟี่เบรค', icon: '☕', description: 'Coffee Break & High Tea ระดับโรงแรม' },
-  { value: 'snack-box', label: 'สแน็คบ็อกซ์', icon: '📦', description: 'Food Box & Snack Box สำหรับทุกโอกาส' },
-  { value: 'food-stall', label: 'ฟู้ดสตอล์', icon: '🍜', description: 'อาหารสตรีทฟู้ดและเบเกอรี่' }
+  { value: 'buffet-table', label: 'รูปภาพของโต๊ะอาหาร', icon: '🍽️', description: 'Buffet, Table Setting' },
+  { value: 'food-plating', label: 'รูปภาพอาหาร', icon: '🍛', description: 'Food Plating, Food Station' },
+  { value: 'event-atmosphere', label: 'รูปภาพบรรยากาศงาน', icon: '✨', description: 'Event Decoration, Lighting' },
+  { value: 'special-dishes', label: 'รูปภาพเมนูหรืออาหารพิเศษ', icon: '⭐', description: 'Special Dishes' }
 ];
 
 /**
