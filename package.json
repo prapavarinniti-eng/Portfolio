@@ -16,7 +16,7 @@
     "test:performance": "node tests/performance/performance.test.js",
     "test:all": "npm run test && npm run test:e2e",
     "verify": "node tests/verification/verify-deployment.js",
-    "admin": "node admin-helper.js",
+    "admin": "node admin-commands.js",
     "admin:new": "node admin-commands.js",
     "admin:stats": "node quick-admin.js stats",
     "admin:upload": "node quick-admin.js upload",

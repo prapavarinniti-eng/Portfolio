@@ -245,6 +245,105 @@ class AdminCommands {
     });
   }
   
+  async deleteSelectedImages() {
+    console.log('🗑️  เลือกและลบรูปเฉพาะรายการ\n');
+    
+    try {
+      // แสดงรูปทั้งหมดแบบมีหมายเลข
+      const { data: images, error } = await supabase
+        .from('portfolio_images')
+        .select('id, title, category, created_at')
+        .order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      
+      if (images.length === 0) {
+        console.log('❌ ไม่มีรูปในฐานข้อมูล');
+        return;
+      }
+      
+      console.log(`📋 รายการรูปทั้งหมด (${images.length} รูป):\n`);
+      
+      images.forEach((img, index) => {
+        const categoryLabel = this.getCategoryLabel(img.category);
+        const date = new Date(img.created_at).toLocaleDateString('th-TH');
+        console.log(`${index + 1}. ${img.title}`);
+        console.log(`   หมวด: ${categoryLabel} | วันที่: ${date}`);
+        console.log('');
+      });
+      
+      const selection = await this.question('ใส่หมายเลขรูปที่ต้องการลบ (เช่น 1,3,5 หรือ 1-10 หรือ all): ');
+      
+      if (!selection || selection.trim() === '') {
+        console.log('❌ ไม่ได้เลือกรูป');
+        return;
+      }
+      
+      let selectedImages = [];
+      
+      if (selection.toLowerCase() === 'all') {
+        selectedImages = images;
+      } else {
+        const indices = this.parseSelection(selection, images.length);
+        if (indices.length === 0) {
+          console.log('❌ รูปแบบการเลือกไม่ถูกต้อง');
+          return;
+        }
+        selectedImages = indices.map(i => images[i - 1]);
+      }
+      
+      console.log(`\n📋 รายการที่จะลบ (${selectedImages.length} รูป):`);
+      selectedImages.forEach((img, index) => {
+        console.log(`${index + 1}. ${img.title} (${this.getCategoryLabel(img.category)})`);
+      });
+      
+      const confirm = await this.question(`\n⚠️  ต้องการลบ ${selectedImages.length} รูปใช่หรือไม่? (yes/no): `);
+      
+      if (confirm.toLowerCase() !== 'yes' && confirm.toLowerCase() !== 'y') {
+        console.log('❌ ยกเลิกการลบ');
+        return;
+      }
+      
+      console.log('🔄 กำลังลบรูป...');
+      
+      const imageIds = selectedImages.map(img => img.id);
+      const { error: deleteError } = await supabase
+        .from('portfolio_images')
+        .delete()
+        .in('id', imageIds);
+      
+      if (deleteError) throw deleteError;
+      
+      console.log(`✅ ลบ ${selectedImages.length} รูปสำเร็จ!`);
+      
+    } catch (error) {
+      console.error('❌ Error:', error.message);
+    }
+  }
+  
+  parseSelection(selection, maxNum) {
+    const indices = [];
+    const parts = selection.split(',').map(s => s.trim());
+    
+    for (const part of parts) {
+      if (part.includes('-')) {
+        const [start, end] = part.split('-').map(n => parseInt(n.trim()));
+        if (start >= 1 && end <= maxNum && start <= end) {
+          for (let i = start; i <= end; i++) {
+            indices.push(i);
+          }
+        }
+      } else {
+        const num = parseInt(part);
+        if (num >= 1 && num <= maxNum) {
+          indices.push(num);
+        }
+      }
+    }
+    
+    return [...new Set(indices)]; // ลบซ้ำ
+  }
+
   async showMenu() {
     console.clear();
     console.log('🎯 ============ FUZIO CATERING ADMIN ============');
@@ -256,7 +355,8 @@ class AdminCommands {
     console.log('3. ⚡ เพิ่มประสิทธิภาพฐานข้อมูล');
     console.log('4. 🔍 ค้นหารูปภาพ');
     console.log('5. 🗑️  ลบรูปตามหมวดหมู่');
-    console.log('6. 💥 ลบรูปทั้งหมด');
+    console.log('6. 🎯 เลือกและลบรูปเฉพาะรายการ');
+    console.log('7. 💥 ลบรูปทั้งหมด');
     console.log('0. 🚪 ออก');
     console.log('');
     
@@ -279,6 +379,9 @@ class AdminCommands {
         await this.deleteByCategory();
         break;
       case '6':
+        await this.deleteSelectedImages();
+        break;
+      case '7':
         await this.clearAllImages();
         break;
       case '0':
@@ -286,7 +389,7 @@ class AdminCommands {
         rl.close();
         return;
       default:
-        console.log('❌ กรุณาเลือกหมายเลข 0-6');
+        console.log('❌ กรุณาเลือกหมายเลข 0-7');
     }
     
     console.log('\n');
