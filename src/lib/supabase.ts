@@ -53,7 +53,7 @@ type DatabaseCategory =
 /**
  * Map new UI categories to database categories
  */
-const CATEGORY_MAPPING: Record<PortfolioCategory, DatabaseCategory[]> = {
+const CATEGORY_MAPPING: Record<string, DatabaseCategory[]> = {
   'buffet-table': ['corporate', 'buffet'],
   'food-plating': ['fine-dining', 'cocktail', 'coffee-break'],
   'event-atmosphere': ['wedding'],

@@ -199,7 +199,7 @@ function getCategoryFromFolder(folderName) {
     '08-government-events': 'corporate', // Use corporate instead of government
     '09-private-parties': 'wedding' // Use wedding instead of signature
   };
-  return folderMap[folderName] || 'signature';
+  return folderMap[folderName] || 'snack-box';
 }
 
 // Generate unique content for each image with sequential numbering
@@ -224,8 +224,6 @@ async function uploadImages() {
     // Check all category folders for images
     const imageDir = path.join(__dirname, 'public', 'image');
     const categoryFolders = [
-      '01-buffet-table', '02-food-plating', '03-event-atmosphere', '04-special-dishes',
-      // Legacy folders for backward compatibility
       '01-weddings', '02-corporate-meetings', '03-fine-dining', 
       '04-buffet-service', '05-cocktail-reception', '06-coffee-break', 
       '07-snack-food-box', '08-government-events', '09-private-parties'
