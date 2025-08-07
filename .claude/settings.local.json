@@ -56,7 +56,8 @@
       "Bash(npx supabase-js-cli select:*)",
       "Bash(del \"D:\\catering-portfolio\\public\\image\\03-fine-dining\\49713c11-1966-4867-b2b3-58edb936ee35 (1).png\")",
       "Bash(npx next lint:*)",
-      "Bash(sed:*)"
+      "Bash(sed:*)",
+      "Bash(del \"D:\\catering-portfolio\\src\\app\\booking\\page.tsx\")"
     ],
     "deny": []
   }

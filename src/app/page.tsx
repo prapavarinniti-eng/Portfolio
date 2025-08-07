@@ -31,6 +31,10 @@ export default function Home() {
                 ติดต่อ
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-orange-600 transition-all duration-200 group-hover:w-full"></span>
               </a>
+              <a href="/booking" className="text-gray-600 hover:text-orange-600 font-medium transition-colors duration-200 relative group">
+                จองออนไลน์
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-orange-600 transition-all duration-200 group-hover:w-full"></span>
+              </a>
               <a href="tel:+66815146939" className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-2 rounded-full hover:from-orange-600 hover:to-red-600 transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105">
                 📞 โทร
               </a>
@@ -84,6 +88,9 @@ export default function Home() {
               <a href="/contact" className="block px-3 py-2 text-gray-600 hover:text-orange-600 hover:bg-orange-50 rounded-md font-medium transition-all duration-200">
                 📞 ติดต่อ
               </a>
+              <a href="/booking" className="block px-3 py-2 text-gray-600 hover:text-orange-600 hover:bg-orange-50 rounded-md font-medium transition-all duration-200">
+                📋 จองออนไลน์
+              </a>
               <div className="pt-2">
                 <a href="tel:+66815146939" className="block mx-3 px-4 py-2 bg-gradient-to-r from-orange-500 to-red-500 text-white text-center rounded-full hover:from-orange-600 hover:to-red-600 transition-all duration-200 shadow-md">
                   📞 โทร: 081-514-6939
@@ -108,8 +115,8 @@ export default function Home() {
           </div>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
-            <a href="/contact" className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 rounded-full font-medium transition-all duration-200 text-center shadow-lg hover:shadow-xl transform hover:scale-105">
-              📞 ติดต่อเรา
+            <a href="/booking" className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 rounded-full font-medium transition-all duration-200 text-center shadow-lg hover:shadow-xl transform hover:scale-105">
+              📋 จองออนไลน์
             </a>
             <a href="/portfolio" className="border-2 border-orange-400 text-orange-400 hover:bg-orange-400 hover:text-white px-6 py-3 rounded-full font-medium transition-all duration-200 text-center hover:shadow-lg transform hover:scale-105">
               📁 ดูผลงาน
