@@ -335,6 +335,7 @@ export default function Contact() {
                   )}
                 </div>
             </div>
+          </div>
 
             {/* Contact Information */}
             <div className="space-y-8">
