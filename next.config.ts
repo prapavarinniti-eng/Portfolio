@@ -40,6 +40,11 @@ const nextConfig: NextConfig = {
     scrollRestoration: true,
   },
 
+  // Force deployment trigger
+  env: {
+    NEXT_DEPLOYMENT_ID: Date.now().toString(),
+  },
+
   // Security headers
   async headers() {
     return [
