@@ -59,7 +59,8 @@
       "Bash(sed:*)",
       "Bash(del \"D:\\catering-portfolio\\src\\app\\booking\\page.tsx\")",
       "Bash(npm run typecheck:*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(del test-booking.js)"
     ],
     "deny": []
   }

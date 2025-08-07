@@ -1,230 +1,140 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-// Initialize Supabase client
+// Simple table structure - no complex constraints
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
 
-// GET - ดึงข้อมูลการจองทั้งหมด (สำหรับ Admin)
-export async function GET(request: NextRequest) {
-  try {
-    const { searchParams } = new URL(request.url);
-    const limit = parseInt(searchParams.get('limit') || '50');
-    const status = searchParams.get('status') || '';
-    const page = parseInt(searchParams.get('page') || '1');
-    const offset = (page - 1) * limit;
-
-    // Use service role key to bypass RLS for admin operations
-    const adminSupabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
-
-    let query = adminSupabase
-      .from('bookings')
-      .select('*', { count: 'exact' })
-      .order('created_at', { ascending: false })
-      .range(offset, offset + limit - 1);
-
-    if (status) {
-      query = query.eq('booking_status', status);
-    }
-
-    const { data: bookings, error, count } = await query;
-
-    if (error) {
-      console.error('Error fetching bookings:', error);
-      return NextResponse.json(
-        { error: 'Failed to fetch bookings' },
-        { status: 500 }
-      );
-    }
-
-    return NextResponse.json({
-      bookings,
-      totalCount: count,
-      page,
-      limit
-    });
-
-  } catch (error) {
-    console.error('Bookings GET error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
-  }
+// Generate simple booking reference
+function generateReference(): string {
+  const now = new Date();
+  const date = now.toISOString().slice(2, 10).replace(/-/g, ''); // YYMMDD
+  const random = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
+  return `FZ${date}${random}`;
 }
 
-// POST - สร้างการจองใหม่
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     
-    // Validate required fields (removed serviceType as it will be discussed with admin)
-    const requiredFields = [
-      'customerName',
-      'customerPhone', 
-      'customerEmail',
-      'eventType',
-      'eventDate',
-      'eventTime',
-      'guestCount',
-      'budgetRange'
-    ];
-
-    const missingFields = requiredFields.filter(field => !body[field]);
-    if (missingFields.length > 0) {
+    // Simple validation - just check required fields exist
+    if (!body.name || !body.phone || !body.email || !body.eventType || !body.eventDate || !body.guestCount) {
       return NextResponse.json(
-        { error: `Missing required fields: ${missingFields.join(', ')}` },
+        { error: 'กรุณากรอกข้อมูลให้ครบถ้วน' },
         { status: 400 }
       );
     }
 
-    // Prepare booking data (let database generate booking_reference)
+    // Create simple booking record
     const bookingData = {
-      // ข้อมูลลูกค้า
-      customer_name: body.customerName,
-      customer_phone: body.customerPhone,
-      customer_email: body.customerEmail,
-      
-      // ข้อมูลงาน
+      customer_name: body.name,
+      customer_phone: body.phone,
+      customer_email: body.email,
       event_type: body.eventType,
       event_date: body.eventDate,
-      event_time: body.eventTime || '12:00:00',
-      event_duration: parseInt(body.eventDuration) || 4,
-      
-      // สถานที่
-      venue_type: body.venueType || 'customer_venue',
-      venue_address: body.venueAddress || '',
-      venue_details: body.venueDetails || '',
-      
-      // จำนวนคน
-      guest_count: parseInt(body.guestCount),
-      
-      // ประเภทบริการ (admin will discuss details later)
-      service_type: body.serviceType || 'to_be_discussed',
-      menu_preferences: body.menuPreferences || '',
-      
-      // งบประมาณ
-      budget_range: body.budgetRange || '',
-      
-      // ความต้องการพิเศษ
-      special_requests: body.specialRequests || '',
-      dietary_requirements: Array.isArray(body.dietaryRequirements) ? body.dietaryRequirements : [],
-      
-      // อุปกรณ์เพิ่มเติม
-      equipment_needed: Array.isArray(body.equipmentNeeded) ? body.equipmentNeeded : [],
-      
-      // ราคาประเมิน
-      estimated_price: body.estimatedPrice ? parseFloat(body.estimatedPrice) : null,
-      
-      // การติดต่อ
-      preferred_contact_method: body.preferredContactMethod || 'phone',
-      
-      // สถานะเริ่มต้น
-      booking_status: 'pending',
-      payment_status: 'unpaid',
-      
-      // Add required fields with defaults
-      deposit_amount: 0.0,
-      admin_notes: '',
-      final_price: null
-      
-      // booking_reference will be auto-generated by database trigger
+      guest_count: parseInt(body.guestCount) || 0,
+      special_requests: body.details || '',
+      booking_reference: generateReference(),
+      booking_status: 'รอดำเนินการ',
+      created_at: new Date().toISOString()
     };
 
-    // Insert into database - no fallback, must succeed
-    const { data: booking, error } = await supabase
-      .from('bookings')
+    // Try to insert into a simple table structure
+    const { data, error } = await supabase
+      .from('simple_bookings')
       .insert([bookingData])
       .select()
       .single();
 
     if (error) {
       console.error('Database error:', error);
+      
+      // If table doesn't exist, create it and try again
+      if (error.message.includes('does not exist') || error.code === '42P01') {
+        console.log('Creating simple_bookings table...');
+        
+        // Create simple table without constraints
+        const createTableQuery = `
+          CREATE TABLE IF NOT EXISTS simple_bookings (
+            id SERIAL PRIMARY KEY,
+            customer_name TEXT NOT NULL,
+            customer_phone TEXT NOT NULL,
+            customer_email TEXT NOT NULL,
+            event_type TEXT NOT NULL,
+            event_date TEXT NOT NULL,
+            guest_count INTEGER DEFAULT 0,
+            special_requests TEXT DEFAULT '',
+            booking_reference TEXT UNIQUE NOT NULL,
+            booking_status TEXT DEFAULT 'รอดำเนินการ',
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+          );
+        `;
+        
+        // Try to create table (this might not work with regular client, but worth trying)
+        const { error: createError } = await supabase.rpc('exec_sql', { sql: createTableQuery });
+        
+        if (!createError) {
+          // Try insert again
+          const { data: retryData, error: retryError } = await supabase
+            .from('simple_bookings')
+            .insert([bookingData])
+            .select()
+            .single();
+            
+          if (!retryError && retryData) {
+            return NextResponse.json({
+              success: true,
+              reference: retryData.booking_reference,
+              message: 'การจองเสร็จสิ้น'
+            });
+          }
+        }
+      }
+      
+      // If all else fails, return error
       return NextResponse.json(
-        { error: `Database error: ${error.message}` },
+        { error: `เกิดข้อผิดพลาด: ${error.message}` },
         { status: 500 }
       );
-    }
-
-    if (!booking) {
-      console.error('No booking data returned');
-      return NextResponse.json(
-        { error: 'Failed to create booking' },
-        { status: 500 }
-      );
-    }
-
-    // Send confirmation email/SMS (optional)
-    try {
-      await sendBookingConfirmation(booking);
-    } catch (notificationError) {
-      console.warn('Failed to send booking confirmation:', notificationError);
-      // Don't fail the booking creation for notification errors
     }
 
     return NextResponse.json({
       success: true,
-      message: 'Booking created successfully',
-      bookingReference: booking.booking_reference,
-      booking
+      reference: data.booking_reference,
+      message: 'การจองเสร็จสิ้น'
     });
 
-  } catch (error) {
-    console.error('Booking POST error:', error);
+  } catch (error: any) {
+    console.error('API error:', error);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'เกิดข้อผิดพลาดภายในเซิร์ฟเวอร์' },
       { status: 500 }
     );
   }
 }
 
-// Helper function to generate booking reference
-function generateBookingReference(): string {
-  const now = new Date();
-  const dateStr = now.toISOString().slice(2, 10).replace(/-/g, ''); // YYMMDD
-  const randomStr = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
-  return `FZ${dateStr}${randomStr}`;
-}
+// GET method for admin to view bookings
+export async function GET() {
+  try {
+    const { data, error } = await supabase
+      .from('simple_bookings')
+      .select('*')
+      .order('created_at', { ascending: false });
 
-// Helper function to generate UUID fallback
-function generateUUID(): string {
-  return 'xxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-    const r = Math.random() * 16 | 0;
-    const v = c === 'x' ? r : (r & 0x3 | 0x8);
-    return v.toString(16);
-  });
-}
+    if (error) {
+      return NextResponse.json(
+        { error: 'ไม่สามารถดึงข้อมูลการจองได้' },
+        { status: 500 }
+      );
+    }
 
-// Helper function to send booking confirmation
-async function sendBookingConfirmation(booking: any) {
-  // TODO: Implement email/SMS confirmation
-  // This could integrate with services like:
-  // - SendGrid for email
-  // - Twilio for SMS  
-  // - Line Notify for Line messages
-  
-  console.log('Booking confirmation for:', booking.booking_reference);
-  
-  // Example of what you might send:
-  const confirmationMessage = `
-    ✅ การจองสำเร็จ!
-    รหัสการจอง: ${booking.booking_reference}
-    ชื่อผู้จอง: ${booking.customer_name}
-    ประเภทงาน: ${booking.event_type}
-    วันที่: ${booking.event_date}
-    จำนวนแขก: ${booking.guest_count} คน
-    
-    เราจะติดต่อกลับภายใน 24 ชั่วโมง
-    
-    📞 081-514-6939
-    📧 prapavarinniti@gmail.com
-  `;
-  
-  // For now, just log the message
-  // In production, you would send this via email/SMS
+    return NextResponse.json({ bookings: data || [] });
+  } catch (error) {
+    return NextResponse.json(
+      { error: 'เกิดข้อผิดพลาดในการดึงข้อมูล' },
+      { status: 500 }
+    );
+  }
 }
