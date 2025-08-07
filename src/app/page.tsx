@@ -31,7 +31,7 @@ export default function Home() {
                 ติดต่อ
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-orange-600 transition-all duration-200 group-hover:w-full"></span>
               </a>
-              <a href="tel:+66657165037" className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-2 rounded-full hover:from-orange-600 hover:to-red-600 transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105">
+              <a href="tel:+66815146939" className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-2 rounded-full hover:from-orange-600 hover:to-red-600 transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105">
                 📞 โทร
               </a>
             </div>
@@ -85,8 +85,8 @@ export default function Home() {
                 📞 ติดต่อ
               </a>
               <div className="pt-2">
-                <a href="tel:+66657165037" className="block mx-3 px-4 py-2 bg-gradient-to-r from-orange-500 to-red-500 text-white text-center rounded-full hover:from-orange-600 hover:to-red-600 transition-all duration-200 shadow-md">
-                  📞 โทร: 065-716-5037
+                <a href="tel:+66815146939" className="block mx-3 px-4 py-2 bg-gradient-to-r from-orange-500 to-red-500 text-white text-center rounded-full hover:from-orange-600 hover:to-red-600 transition-all duration-200 shadow-md">
+                  📞 โทร: 081-514-6939
                 </a>
               </div>
             </div>
@@ -124,11 +124,11 @@ export default function Home() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h3 className="text-xl font-bold mb-3">🍽️ Fuzio Catering</h3>
           <div className="flex flex-col sm:flex-row justify-center items-center gap-6 mb-4">
-            <a href="tel:+66657165037" className="flex items-center hover:text-orange-400 transition-colors">
-              <span>📞 065-716-5037</span>
+            <a href="tel:+66815146939" className="flex items-center hover:text-orange-400 transition-colors">
+              <span>📞 081-514-6939</span>
             </a>
-            <a href="mailto:info@fuzio.co.th" className="flex items-center hover:text-orange-400 transition-colors">
-              <span>📧 info@fuzio.co.th</span>
+            <a href="mailto:prapavarinniti@gmail.com" className="flex items-center hover:text-orange-400 transition-colors">
+              <span>📧 prapavarinniti@gmail.com</span>
             </a>
           </div>
           <p className="text-gray-400 text-sm">
