@@ -1,0 +1,7 @@
+FORCE_DEPLOY=true
+TIMESTAMP=2025-08-07T14:45:00Z
+VERSION=booking-system-v2.0
+CHANGES=removed-service-package-selection
+
+# This file is used to force Render deployment
+# by creating a change that triggers the build
