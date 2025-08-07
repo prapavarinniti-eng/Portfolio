@@ -121,7 +121,7 @@ export default function Portfolio() {
                 ติดต่อ
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-orange-600 transition-all duration-200 group-hover:w-full"></span>
               </a>
-              <a href="tel:+66657165037" className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-2 rounded-full hover:from-orange-600 hover:to-red-600 transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105">
+              <a href="tel:+66815146939" className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-2 rounded-full hover:from-orange-600 hover:to-red-600 transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105">
                 📞 โทร
               </a>
             </div>
@@ -176,7 +176,7 @@ export default function Portfolio() {
               </a>
               <div className="pt-2">
                 <a href="tel:+66657165037" className="block mx-3 px-4 py-2 bg-gradient-to-r from-orange-500 to-red-500 text-white text-center rounded-full hover:from-orange-600 hover:to-red-600 transition-all duration-200 shadow-md">
-                  📞 โทร: 065-716-5037
+                  📞 โทร: 081-514-6939
                 </a>
               </div>
             </div>
@@ -541,13 +541,13 @@ export default function Portfolio() {
             <div className="flex items-center">
               <span aria-hidden="true">📞</span>
               <a href="tel:+66657165037" className="ml-2 hover:text-orange-400 transition-colors">
-                065-716-5037
+                081-514-6939
               </a>
             </div>
             <div className="flex items-center">
               <span aria-hidden="true">📧</span>
-              <a href="mailto:info@fuzio.co.th" className="ml-2 hover:text-orange-400 transition-colors">
-                info@fuzio.co.th
+              <a href="mailto:prapavarinniti@gmail.com" className="ml-2 hover:text-orange-400 transition-colors">
+                prapavarinniti@gmail.com
               </a>
             </div>
             <div className="flex items-center">

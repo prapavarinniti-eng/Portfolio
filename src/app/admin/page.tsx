@@ -1018,13 +1018,13 @@ export default function AdminPanel() {
                         <p className="text-sm text-gray-600 mb-4">โทรหรือส่งอีเมลหาลูกค้า</p>
                         <div className="space-y-2">
                           <a
-                            href="tel:065-716-5037"
+                            href="tel:081-514-6939"
                             className="block w-full py-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-xl font-bold hover:from-blue-600 hover:to-cyan-600 transition-all duration-300"
                           >
-                            📞 โทร 065-716-5037
+                            📞 โทร 081-514-6939
                           </a>
                           <a
-                            href="mailto:info@fuziocatering.com"
+                            href="mailto:prapavarinniti@gmail.com"
                             className="block w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-bold hover:from-purple-600 hover:to-pink-600 transition-all duration-300"
                           >
                             📧 ส่งอีเมล
