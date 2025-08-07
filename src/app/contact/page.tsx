@@ -544,64 +544,6 @@ export default function Contact() {
         </div>
       </div>
 
-      {/* Footer */}
-      <footer className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white py-16 overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(251,146,60,0.1),transparent_70%)]"></div>
-        <div className="absolute top-0 left-1/4 w-2 h-full bg-gradient-to-b from-orange-500/20 to-transparent"></div>
-        <div className="absolute top-0 right-1/3 w-1 h-full bg-gradient-to-b from-red-500/20 to-transparent"></div>
-        
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-orange-500 to-red-500 rounded-full mb-6 animate-pulse">
-              <span className="text-3xl">🍽️</span>
-            </div>
-            <h3 className="text-4xl font-bold mb-4 bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent">
-              Fuzio Catering
-            </h3>
-            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-              ความอร่อยที่สร้างความประทับใจ ในทุกโอกาสพิเศษของคุณ
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-            <div className="text-center group">
-              <div className="w-16 h-16 bg-gradient-to-r from-orange-500/20 to-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-                <span className="text-2xl">📞</span>
-              </div>
-              <h4 className="text-lg font-semibold mb-2">โทรหาเรา</h4>
-              <p className="text-orange-400 font-bold text-lg">081-514-6939</p>
-              <p className="text-sm text-gray-400">8:00 - 20:00 น.</p>
-            </div>
-            
-            <div className="text-center group">
-              <div className="w-16 h-16 bg-gradient-to-r from-blue-500/20 to-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-                <span className="text-2xl">📧</span>
-              </div>
-              <h4 className="text-lg font-semibold mb-2">อีเมล</h4>
-              <p className="text-blue-400 font-bold">prapavarinniti@gmail.com</p>
-              <p className="text-sm text-gray-400">ตอบภายใน 24 ชม.</p>
-            </div>
-            
-            <div className="text-center group">
-              <div className="w-16 h-16 bg-gradient-to-r from-green-500/20 to-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-                <span className="text-2xl">💬</span>
-              </div>
-              <h4 className="text-lg font-semibold mb-2">Line Chat</h4>
-              <p className="text-green-400 font-bold">@fuziocatering</p>
-              <p className="text-sm text-gray-400">ปรึกษาฟรี</p>
-            </div>
-          </div>
-          
-          <div className="border-t border-gray-700 pt-8 text-center">
-            <p className="text-gray-400 text-sm mb-4">
-              © 2024 Fuzio Catering. สงวนลิขสิทธิ์ทุกประการ
-            </p>
-            <p className="text-xs text-gray-500">
-              ✨ ออกแบบและพัฒนาเพื่อมอบประสบการณ์การใช้งานที่ดีที่สุด
-            </p>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }
