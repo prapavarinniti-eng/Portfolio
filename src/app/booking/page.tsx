@@ -12,7 +12,6 @@ export default function BookingPage() {
     eventDate: '',
     eventTime: '12:00',
     guestCount: 50,
-    serviceType: '',
     budgetRange: '',
     specialRequests: '',
     venueType: 'customer_venue',
@@ -28,22 +27,15 @@ export default function BookingPage() {
 
   // Calculate estimated price
   useEffect(() => {
-    if (formData.serviceType && formData.guestCount > 0) {
-      const basePrice = getBasePrice(formData.serviceType);
+    if (formData.guestCount > 0) {
+      const basePrice = getBasePrice('');
       setEstimatedPrice(basePrice * formData.guestCount);
     }
-  }, [formData.serviceType, formData.guestCount]);
+  }, [formData.guestCount]);
 
   const getBasePrice = (serviceType: string) => {
-    const prices: Record<string, number> = {
-      'buffet_standard': 450,
-      'buffet_premium': 650, 
-      'set_menu_wedding': 850,
-      'cocktail': 320,
-      'coffee_break': 180,
-      'snack_box': 120
-    };
-    return prices[serviceType] || 400;
+    // Simple base price since admin will discuss details later
+    return 500;
   };
 
   const handleInputChange = (field: string, value: any) => {
@@ -74,7 +66,6 @@ export default function BookingPage() {
       if (!formData.eventDate) newErrors.eventDate = 'กรุณาเลือกวันที่';
       if (formData.guestCount < 10) newErrors.guestCount = 'จำนวนแขกอย่างน้อย 10 คน';
     } else if (step === 3) {
-      if (!formData.serviceType) newErrors.serviceType = 'กรุณาเลือกประเภทบริการ';
       if (!formData.budgetRange) newErrors.budgetRange = 'กรุณาเลือกงบประมาณ';
       if (formData.venueType === 'customer_venue' && !formData.venueAddress.trim()) {
         newErrors.venueAddress = 'กรุณากรอกที่อยู่สถานที่จัดงาน';
@@ -135,49 +126,12 @@ export default function BookingPage() {
     { value: 'other', label: 'อื่นๆ', icon: '✨', color: 'gray' }
   ];
 
-  const serviceTypes = [
-    { 
-      value: 'buffet_standard', 
-      label: 'บุฟเฟต์มาตรฐาน', 
-      price: 450, 
-      desc: 'อาหารไทย-สากล 15 เมนู',
-      features: ['อาหารหลัก 8 เมนู', 'ของหวาน 3 เมนู', 'ผลไม้สด', 'น้ำดื่ม'],
-      icon: '🍽️',
-      popular: false
-    },
-    { 
-      value: 'buffet_premium', 
-      label: 'บุฟเฟต์พรีเมี่ยม', 
-      price: 650, 
-      desc: 'อาหารระดับโรงแรม 20 เมนู',
-      features: ['อาหารหลัก 12 เมนู', 'อาหารทะเล 3 เมนู', 'ของหวาน 4 เมนู', 'พนักงานเสิร์ฟ'],
-      icon: '⭐',
-      popular: true
-    },
-    { 
-      value: 'set_menu_wedding', 
-      label: 'เซ็ตเมนูแต่งงาน', 
-      price: 850, 
-      desc: 'เมนูจีน 9 คำ พิเศษ',
-      features: ['เมนูจีน 9 คำ', 'ขนมแต่งงาน', 'ผลไม้', 'ดอกไม้ประดับ'],
-      icon: '💎',
-      popular: false
-    },
-    { 
-      value: 'cocktail', 
-      label: 'ค็อกเทลปาร์ตี้', 
-      price: 320, 
-      desc: 'อาหารว่าง + เครื่องดื่ม',
-      features: ['อาหารว่าง 8 ชนิด', 'เครื่องดื่ม', 'น้ำแข็ง', 'แก้วเสิร์ฟ'],
-      icon: '🍸',
-      popular: false
-    }
-  ];
+  // Removed service package selection - admin will discuss details later
 
   const stepTitles = [
     { title: 'ข้อมูลผู้จอง', subtitle: 'กรอกข้อมูลติดต่อของคุณ', icon: '👤' },
     { title: 'รายละเอียดงาน', subtitle: 'ข้อมูลเกี่ยวกับงานของคุณ', icon: '🎉' },
-    { title: 'เลือกบริการ', subtitle: 'แพ็กเกจและความต้องการ', icon: '🍽️' },
+    { title: 'ข้อมูลเพิ่มเติม', subtitle: 'งบประมาณและความต้องการ', icon: '💰' },
     { title: 'เสร็จสิ้น', subtitle: 'ยืนยันและส่งคำขอจอง', icon: '✅' }
   ];
 
@@ -422,81 +376,21 @@ export default function BookingPage() {
               </div>
             )}
 
-            {/* Step 3: Service Selection */}
+            {/* Step 3: Additional Information */}
             {currentStep === 3 && (
               <div className="space-y-8">
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-4">
-                    เลือกแพ็กเกจบริการ *
-                  </label>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {serviceTypes.map((service) => (
-                      <div
-                        key={service.value}
-                        className={`relative p-6 rounded-xl border-2 cursor-pointer transition-all hover:shadow-lg ${
-                          formData.serviceType === service.value
-                            ? 'border-orange-500 bg-orange-50 shadow-lg'
-                            : 'border-gray-200 hover:border-gray-300'
-                        }`}
-                        onClick={() => handleInputChange('serviceType', service.value)}
-                      >
-                        {service.popular && (
-                          <div className="absolute -top-3 -right-3 bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold">
-                            ยอดนิยม
-                          </div>
-                        )}
-                        <div className="flex items-start justify-between mb-4">
-                          <div className="text-3xl">{service.icon}</div>
-                          <div className="text-right">
-                            <div className="text-2xl font-bold text-orange-600">
-                              ฿{service.price.toLocaleString()}
-                            </div>
-                            <div className="text-sm text-gray-600">ต่อคน</div>
-                          </div>
-                        </div>
-                        <h3 className="text-lg font-bold text-gray-900 mb-2">
-                          {service.label}
-                        </h3>
-                        <p className="text-gray-600 mb-4">{service.desc}</p>
-                        <div className="space-y-1">
-                          {service.features.map((feature, index) => (
-                            <div key={index} className="flex items-center text-sm text-gray-700">
-                              <span className="text-green-500 mr-2">✓</span>
-                              {feature}
-                            </div>
-                          ))}
-                        </div>
-                        <div className={`mt-4 w-6 h-6 rounded-full border-2 mx-auto ${
-                          formData.serviceType === service.value
-                            ? 'border-orange-500 bg-orange-500'
-                            : 'border-gray-300'
-                        }`}>
-                          {formData.serviceType === service.value && (
-                            <div className="w-2 h-2 bg-white rounded-full mx-auto mt-1" />
-                          )}
-                        </div>
-                      </div>
-                    ))}
+                {/* Info Notice */}
+                <div className="bg-blue-50 border border-blue-200 rounded-xl p-6">
+                  <div className="text-center">
+                    <div className="text-3xl mb-3">📞</div>
+                    <h3 className="text-lg font-bold text-blue-800 mb-2">
+                      รายละเอียดแพ็กเกจและเมนู
+                    </h3>
+                    <p className="text-blue-700">
+                      ทีมงานจะติดต่อกลับไปเพื่อปรึกษารายละเอียดแพ็กเกจ เมนูอาหาร และราคาที่เหมาะสมกับงานของคุณ
+                    </p>
                   </div>
-                  {errors.serviceType && <p className="mt-2 text-sm text-red-600">{errors.serviceType}</p>}
                 </div>
-                
-                {/* Price Estimation */}
-                {estimatedPrice > 0 && (
-                  <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-6">
-                    <div className="text-center">
-                      <h3 className="text-lg font-bold text-green-800 mb-2">
-                        💰 ราคาประเมินเบื้องต้น
-                      </h3>
-                      <div className="text-4xl font-bold text-green-600 mb-2">
-                        ฿{estimatedPrice.toLocaleString()}
-                      </div>
-                      <p className="text-sm text-green-700">
-                        *ราคาสุดท้ายอาจแตกต่างตามความต้องการเพิ่มเติม
-                      </p>
-                    </div>
-                  </div>
-                )}
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
