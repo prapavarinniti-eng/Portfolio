@@ -1,7 +1,7 @@
 FORCE_DEPLOY=true
-TIMESTAMP=2025-08-07T15:25:00Z
-VERSION=booking-system-v2.2
-CHANGES=fix-502-api-bookings-supabase
+TIMESTAMP=2025-08-07T15:35:00Z
+VERSION=booking-system-v2.3
+CHANGES=fix-rls-policies-admin-access
 
 # This file is used to force Render deployment
 # by creating a change that triggers the build

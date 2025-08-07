@@ -1,199 +1,564 @@
--- 🗄️ Fuzio Catering - Booking System Database Setup
--- รัน script นี้ใน Supabase SQL Editor
+-- Fuzio Catering - Production Booking System Database Setup
+-- Run this script in Supabase SQL Editor
 
--- ลบตารางเก่าถ้ามี (ระวัง! จะลบข้อมูล)
+-- Enable required extensions
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+
+-- Drop existing tables if needed (CAUTION: This will delete data!)
 -- DROP TABLE IF EXISTS bookings CASCADE;
 -- DROP TABLE IF EXISTS service_packages CASCADE;
 
--- สร้างตารางการจองหลัก
+-- Create enum types for better data integrity
+CREATE TYPE booking_status_type AS ENUM ('pending', 'confirmed', 'cancelled', 'completed');
+CREATE TYPE payment_status_type AS ENUM ('unpaid', 'deposit_paid', 'full_paid', 'refunded');
+CREATE TYPE contact_method_type AS ENUM ('phone', 'email', 'line', 'facebook');
+CREATE TYPE venue_type_enum AS ENUM ('customer_venue', 'our_venue', 'hotel', 'restaurant', 'outdoor');
+CREATE TYPE event_type_enum AS ENUM ('wedding', 'corporate', 'birthday', 'anniversary', 'conference', 'seminar', 'other');
+
+-- Function to validate email format
+CREATE OR REPLACE FUNCTION is_valid_email(email TEXT) 
+RETURNS BOOLEAN AS $$
+BEGIN
+  RETURN email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$';
+END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+
+-- Function to validate Thai phone number
+CREATE OR REPLACE FUNCTION is_valid_thai_phone(phone TEXT) 
+RETURNS BOOLEAN AS $$
+BEGIN
+  -- Allow formats: 08X-XXX-XXXX, 08XXXXXXXX, +6608XXXXXXXX
+  RETURN phone ~* '^(\+66|0)[0-9]{8,9}$' OR phone ~* '^[0-9]{2,3}-[0-9]{3}-[0-9]{4}$';
+END;
+$$ LANGUAGE plpgsql IMMUTABLE;
+
+-- Create main bookings table with enhanced constraints
 CREATE TABLE IF NOT EXISTS bookings (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   
-  -- ข้อมูลลูกค้า
-  customer_name VARCHAR(255) NOT NULL,
-  customer_phone VARCHAR(20) NOT NULL,
-  customer_email VARCHAR(255) NOT NULL,
+  -- Customer information with validation
+  customer_name VARCHAR(255) NOT NULL CHECK (LENGTH(TRIM(customer_name)) >= 2),
+  customer_phone VARCHAR(25) NOT NULL CHECK (is_valid_thai_phone(customer_phone)),
+  customer_email VARCHAR(320) NOT NULL CHECK (is_valid_email(customer_email)),
   
-  -- ข้อมูลงาน
-  event_type VARCHAR(50) NOT NULL,
-  event_date DATE NOT NULL,
-  event_time TIME DEFAULT '12:00:00',
-  event_duration INTEGER DEFAULT 4,
+  -- Event information
+  event_type event_type_enum NOT NULL,
+  event_date DATE NOT NULL CHECK (event_date >= CURRENT_DATE),
+  event_time TIME NOT NULL DEFAULT '12:00:00',
+  event_duration INTEGER NOT NULL DEFAULT 4 CHECK (event_duration BETWEEN 1 AND 24),
   
-  -- สถานที่
-  venue_type VARCHAR(20) DEFAULT 'customer_venue',
-  venue_address TEXT,
+  -- Venue information
+  venue_type venue_type_enum NOT NULL DEFAULT 'customer_venue',
+  venue_address TEXT CHECK (venue_type = 'our_venue' OR LENGTH(TRIM(venue_address)) > 0),
   venue_details TEXT,
   
-  -- จำนวนคน
-  guest_count INTEGER NOT NULL,
+  -- Guest count with realistic limits
+  guest_count INTEGER NOT NULL CHECK (guest_count BETWEEN 10 AND 2000),
   
-  -- ประเภทบริการ
+  -- Service information
   service_type VARCHAR(50) NOT NULL,
   menu_preferences TEXT,
   
-  -- งบประมาณ
+  -- Budget information
   budget_range VARCHAR(50),
   
-  -- ความต้องการพิเศษ
+  -- Special requirements with JSON validation
   special_requests TEXT,
-  dietary_requirements JSONB DEFAULT '[]'::jsonb,
+  dietary_requirements JSONB NOT NULL DEFAULT '[]'::jsonb 
+    CHECK (jsonb_typeof(dietary_requirements) = 'array'),
   
-  -- อุปกรณ์เพิ่มเติม  
-  equipment_needed JSONB DEFAULT '[]'::jsonb,
+  -- Equipment with JSON validation
+  equipment_needed JSONB NOT NULL DEFAULT '[]'::jsonb 
+    CHECK (jsonb_typeof(equipment_needed) = 'array'),
   
-  -- สถานะการจอง
-  booking_status VARCHAR(20) DEFAULT 'pending' CHECK (booking_status IN ('pending', 'confirmed', 'cancelled', 'completed')),
+  -- Status tracking
+  booking_status booking_status_type NOT NULL DEFAULT 'pending',
   
-  -- การคำนวณราคา
-  estimated_price DECIMAL(10,2),
-  final_price DECIMAL(10,2),
+  -- Pricing with validation
+  estimated_price DECIMAL(12,2) CHECK (estimated_price IS NULL OR estimated_price >= 0),
+  final_price DECIMAL(12,2) CHECK (final_price IS NULL OR final_price >= 0),
   
-  -- การชำระเงิน
-  payment_status VARCHAR(20) DEFAULT 'unpaid' CHECK (payment_status IN ('unpaid', 'deposit_paid', 'full_paid')),
-  deposit_amount DECIMAL(10,2),
+  -- Payment tracking
+  payment_status payment_status_type NOT NULL DEFAULT 'unpaid',
+  deposit_amount DECIMAL(12,2) DEFAULT 0 CHECK (deposit_amount >= 0),
   
-  -- ข้อมูลการติดตาม
-  booking_reference VARCHAR(20) UNIQUE NOT NULL DEFAULT '',
+  -- Reference and tracking
+  booking_reference VARCHAR(15) UNIQUE NOT NULL,
   admin_notes TEXT,
   
-  -- ข้อมูลการติดต่อ
-  preferred_contact_method VARCHAR(20) DEFAULT 'phone' CHECK (preferred_contact_method IN ('phone', 'email', 'line')),
+  -- Contact preferences
+  preferred_contact_method contact_method_type NOT NULL DEFAULT 'phone',
   
-  -- Timestamps
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+  -- Audit timestamps
+  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  
+  -- Additional constraints
+  CONSTRAINT valid_deposit_amount CHECK (
+    deposit_amount <= COALESCE(final_price, estimated_price, 999999)
+  ),
+  CONSTRAINT valid_pricing CHECK (
+    final_price IS NULL OR estimated_price IS NULL OR final_price >= estimated_price * 0.5
+  )
 );
 
--- สร้าง indexes เพื่อความเร็ว
-CREATE INDEX IF NOT EXISTS idx_bookings_date ON bookings(event_date);
+-- Create optimized indexes for performance
+-- Single column indexes
+CREATE INDEX IF NOT EXISTS idx_bookings_event_date ON bookings(event_date) 
+  WHERE booking_status != 'cancelled';
 CREATE INDEX IF NOT EXISTS idx_bookings_status ON bookings(booking_status);
 CREATE INDEX IF NOT EXISTS idx_bookings_reference ON bookings(booking_reference);
 CREATE INDEX IF NOT EXISTS idx_bookings_customer_phone ON bookings(customer_phone);
 CREATE INDEX IF NOT EXISTS idx_bookings_created_at ON bookings(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_bookings_customer_email ON bookings(customer_email);
+CREATE INDEX IF NOT EXISTS idx_bookings_service_type ON bookings(service_type);
+CREATE INDEX IF NOT EXISTS idx_bookings_payment_status ON bookings(payment_status);
 
--- สร้างตารางแพ็กเกจบริการ
+-- Composite indexes for common query patterns
+CREATE INDEX IF NOT EXISTS idx_bookings_date_status ON bookings(event_date, booking_status);
+CREATE INDEX IF NOT EXISTS idx_bookings_status_created ON bookings(booking_status, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_bookings_customer_lookup ON bookings(customer_phone, customer_email);
+CREATE INDEX IF NOT EXISTS idx_bookings_event_service ON bookings(event_type, service_type);
+
+-- JSONB indexes for dietary requirements and equipment
+CREATE INDEX IF NOT EXISTS idx_bookings_dietary_gin ON bookings USING GIN(dietary_requirements);
+CREATE INDEX IF NOT EXISTS idx_bookings_equipment_gin ON bookings USING GIN(equipment_needed);
+
+-- Create service packages table with enhanced validation
 CREATE TABLE IF NOT EXISTS service_packages (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  package_name VARCHAR(255) NOT NULL,
+  package_name VARCHAR(255) NOT NULL UNIQUE,
   service_type VARCHAR(50) NOT NULL,
-  description TEXT,
-  price_per_person DECIMAL(8,2),
-  min_guests INTEGER,
-  max_guests INTEGER,
-  included_items JSONB DEFAULT '[]'::jsonb,
-  is_active BOOLEAN DEFAULT true,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+  description TEXT NOT NULL CHECK (LENGTH(TRIM(description)) > 0),
+  price_per_person DECIMAL(10,2) NOT NULL CHECK (price_per_person >= 0),
+  min_guests INTEGER NOT NULL DEFAULT 1 CHECK (min_guests >= 1),
+  max_guests INTEGER CHECK (max_guests IS NULL OR max_guests >= min_guests),
+  included_items JSONB NOT NULL DEFAULT '[]'::jsonb 
+    CHECK (jsonb_typeof(included_items) = 'array'),
+  is_active BOOLEAN NOT NULL DEFAULT true,
+  sort_order INTEGER DEFAULT 0,
+  created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  
+  -- Constraint to ensure logical guest limits
+  CONSTRAINT valid_guest_range CHECK (max_guests IS NULL OR max_guests >= min_guests)
 );
 
--- สร้างฟังก์ชันสำหรับสร้าง booking reference
+-- Index for service packages
+CREATE INDEX IF NOT EXISTS idx_service_packages_type_active ON service_packages(service_type, is_active);
+CREATE INDEX IF NOT EXISTS idx_service_packages_active_sort ON service_packages(is_active, sort_order);
+CREATE INDEX IF NOT EXISTS idx_service_packages_price ON service_packages(price_per_person) WHERE is_active = true;
+
+-- Enhanced booking reference generation with collision safety
 CREATE OR REPLACE FUNCTION generate_booking_reference()
 RETURNS TEXT AS $$
 DECLARE
   ref_code TEXT;
+  base_code TEXT;
   counter INTEGER := 0;
-  max_attempts INTEGER := 10;
+  max_attempts INTEGER := 50;
+  random_part INTEGER;
+  timestamp_part TEXT;
 BEGIN
+  -- Use date and hour for better distribution
+  timestamp_part := TO_CHAR(NOW(), 'YYMMDD');
+  base_code := 'FZ' || timestamp_part;
+  
   LOOP
-    ref_code := 'FZ' || TO_CHAR(NOW(), 'YYMMDD') || LPAD(FLOOR(RANDOM() * 1000)::TEXT, 3, '0');
+    -- Generate 4-digit random number for better uniqueness
+    random_part := FLOOR(RANDOM() * 10000);
+    ref_code := base_code || LPAD(random_part::TEXT, 4, '0');
     
-    -- ตรวจสอบว่า reference ไม่ซ้ำ
+    -- Check if reference is unique (with advisory lock to prevent race conditions)
+    PERFORM pg_advisory_lock(hashtext(ref_code));
+    
     IF NOT EXISTS (SELECT 1 FROM bookings WHERE booking_reference = ref_code) THEN
+      PERFORM pg_advisory_unlock(hashtext(ref_code));
       EXIT;
     END IF;
     
+    PERFORM pg_advisory_unlock(hashtext(ref_code));
+    
     counter := counter + 1;
     IF counter >= max_attempts THEN
-      ref_code := 'FZ' || TO_CHAR(NOW(), 'YYMMDD') || LPAD(EXTRACT(EPOCH FROM NOW())::INTEGER % 10000::TEXT, 4, '0');
+      -- Fallback: use microseconds for absolute uniqueness
+      ref_code := base_code || LPAD((EXTRACT(MICROSECONDS FROM NOW())::INTEGER % 10000)::TEXT, 4, '0');
+      
+      -- Final check and force uniqueness if needed
+      WHILE EXISTS (SELECT 1 FROM bookings WHERE booking_reference = ref_code) LOOP
+        ref_code := base_code || LPAD((RANDOM() * 10000)::INTEGER::TEXT, 4, '0');
+      END LOOP;
+      
       EXIT;
     END IF;
   END LOOP;
   
   RETURN ref_code;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql VOLATILE;
 
--- Trigger สำหรับสร้าง booking reference อัตโนมัติ
+-- Enhanced trigger function with validation and audit
 CREATE OR REPLACE FUNCTION set_booking_reference()
 RETURNS TRIGGER AS $$
 BEGIN
-  -- สร้าง booking reference ถ้ายังไม่มี
-  IF NEW.booking_reference IS NULL OR NEW.booking_reference = '' THEN
+  -- Generate booking reference if not provided or empty
+  IF NEW.booking_reference IS NULL OR TRIM(NEW.booking_reference) = '' THEN
     NEW.booking_reference := generate_booking_reference();
   END IF;
   
-  -- อัปเดต timestamp
+  -- Validate booking reference format (FZ + 6 digits + 4 digits)
+  IF NEW.booking_reference !~ '^FZ[0-9]{6}[0-9]{4}$' THEN
+    RAISE EXCEPTION 'Invalid booking reference format. Expected: FZYYMMDDxxxx, got: %', NEW.booking_reference;
+  END IF;
+  
+  -- Set updated timestamp
   NEW.updated_at := CURRENT_TIMESTAMP;
+  
+  -- Validate event date is not in the past (allow same day bookings)
+  IF NEW.event_date < CURRENT_DATE THEN
+    RAISE EXCEPTION 'Event date cannot be in the past. Date provided: %', NEW.event_date;
+  END IF;
+  
+  -- Validate deposit doesn't exceed final/estimated price
+  IF NEW.deposit_amount > COALESCE(NEW.final_price, NEW.estimated_price, 999999) THEN
+    RAISE EXCEPTION 'Deposit amount (%) cannot exceed the booking price (%)', 
+      NEW.deposit_amount, COALESCE(NEW.final_price, NEW.estimated_price);
+  END IF;
+  
+  -- Auto-set payment status based on amounts
+  IF TG_OP = 'UPDATE' AND OLD.deposit_amount != NEW.deposit_amount THEN
+    IF NEW.deposit_amount = 0 THEN
+      NEW.payment_status := 'unpaid';
+    ELSIF NEW.final_price IS NOT NULL AND NEW.deposit_amount >= NEW.final_price THEN
+      NEW.payment_status := 'full_paid';
+    ELSIF NEW.deposit_amount > 0 THEN
+      NEW.payment_status := 'deposit_paid';
+    END IF;
+  END IF;
   
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
--- สร้าง trigger
+-- Create triggers with proper naming
 DROP TRIGGER IF EXISTS booking_reference_trigger ON bookings;
-CREATE TRIGGER booking_reference_trigger
+DROP TRIGGER IF EXISTS trg_bookings_reference_and_audit ON bookings;
+
+CREATE TRIGGER trg_bookings_reference_and_audit
   BEFORE INSERT OR UPDATE ON bookings
   FOR EACH ROW
   EXECUTE FUNCTION set_booking_reference();
 
--- ใส่ข้อมูลแพ็กเกจตัวอย่าง
-INSERT INTO service_packages (package_name, service_type, description, price_per_person, min_guests, max_guests, included_items) 
+-- Create trigger for service packages updated_at
+CREATE OR REPLACE FUNCTION update_timestamp()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at := CURRENT_TIMESTAMP;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS trg_service_packages_updated_at ON service_packages;
+CREATE TRIGGER trg_service_packages_updated_at
+  BEFORE UPDATE ON service_packages
+  FOR EACH ROW
+  EXECUTE FUNCTION update_timestamp();
+
+-- Insert sample service packages with proper validation
+INSERT INTO service_packages (package_name, service_type, description, price_per_person, min_guests, max_guests, included_items, sort_order) 
 VALUES
-('บุฟเฟต์มาตรฐาน', 'buffet_standard', 'บุฟเฟต์อาหารไทย-สากล หลากหลาย 15 เมนู', 450.00, 30, 200, '["อาหารจานหลัก 8 เมนู", "ของหวาน 3 เมนู", "ผลไม้ตามฤดูกาล", "น้ำดื่ม", "น้ำแข็ง", "โต๊ะบุฟเฟต์", "อุปกรณ์เสิร์ฟ"]'::jsonb),
+('Standard Buffet', 'buffet_standard', 'Thai-International buffet with 15 diverse menu items including appetizers, main courses, and desserts', 450.00, 30, 200, '[
+  "8 main course dishes",
+  "3 dessert options", 
+  "Seasonal fruits",
+  "Drinking water",
+  "Ice",
+  "Buffet tables",
+  "Serving equipment",
+  "Basic table setup"
+]'::jsonb, 1),
 
-('บุฟเฟต์พรีเมี่ยม', 'buffet_premium', 'บุฟเฟต์อาหารระดับโรงแรม 20 เมนู', 650.00, 50, 300, '["อาหารจานหลัก 12 เมนู", "อาหารทะเล 3 เมนู", "ของหวาน 4 เมนู", "ผลไม้", "น้ำดื่ม", "โต๊ะบุฟเฟต์", "การตกแต่ง", "พนักงานเสิร์ฟ"]'::jsonb),
+('Premium Buffet', 'buffet_premium', 'Hotel-grade buffet featuring 20 premium menu items with seafood and premium ingredients', 650.00, 50, 300, '[
+  "12 main course dishes",
+  "3 seafood specialties",
+  "4 premium desserts",
+  "Fresh fruit selection",
+  "Premium beverages",
+  "Elegant buffet setup",
+  "Table decorations",
+  "Professional service staff",
+  "Upgraded serving equipment"
+]'::jsonb, 2),
 
-('เซ็ตเมนูแต่งงาน', 'set_menu_wedding', 'เซ็ตเมนูงานแต่งงาน 9 คำ', 850.00, 100, 500, '["เมนูจีน 9 คำ", "ขนมหวานแต่งงาน", "ผลไม้", "น้ำดื่ม", "การจัดโต๊ะ", "ดอกไม้ประดับโต๊ะ"]'::jsonb),
+('Wedding Set Menu', 'set_menu_wedding', 'Traditional 9-course Chinese wedding banquet with ceremonial presentation', 850.00, 100, 500, '[
+  "9-course Chinese banquet",
+  "Wedding cake service",
+  "Fruit platter",
+  "Tea service",
+  "Premium table setting",
+  "Floral centerpieces",
+  "Professional presentation",
+  "Ceremonial service"
+]'::jsonb, 3),
 
-('ค็อกเทลปาร์ตี้', 'cocktail', 'อาหารว่างและเครื่องดื่มสำหรับงานค็อกเทล', 320.00, 20, 150, '["อาหารว่าง 8 ชนิด", "เครื่องดื่มไม่มีแอลกอฮอล์", "น้ำแข็ง", "แก้วเสิร์ฟ", "อุปกรณ์จัดเลี้ยง"]'::jsonb),
+('Cocktail Party', 'cocktail', 'Elegant cocktail reception with canapes and premium beverages', 320.00, 20, 150, '[
+  "8 types of canapés",
+  "Premium non-alcoholic beverages",
+  "Ice service",
+  "Cocktail glassware",
+  "Cocktail tables",
+  "Appetizer displays",
+  "Professional bartender service"
+]'::jsonb, 4),
 
-('คอฟฟี่เบรก', 'coffee_break', 'ขนมและเครื่องดื่มสำหรับพักรับประทาน', 180.00, 10, 100, '["ขนม 4 ชนิด", "กาแฟ/ชา", "น้ำดื่ม", "ถ้วยกาแฟ", "จานขนม"]'::jsonb),
+('Coffee Break', 'coffee_break', 'Professional coffee break service ideal for meetings and conferences', 180.00, 10, 100, '[
+  "4 types of pastries",
+  "Premium coffee and tea",
+  "Bottled water",
+  "Coffee cups and saucers",
+  "Pastry plates",
+  "Sugar and cream service",
+  "Disposable stirrers"
+]'::jsonb, 5),
 
-('สแน็คบ็อกซ์', 'snack_box', 'กล่องอาหารว่างพร้อมเครื่องดื่ม', 120.00, 10, 200, '["กล่องขนม", "เครื่องดื่ม 1 ขวด", "ช้อนส้อม", "ผ้าเช็ดปาก"]'::jsonb)
+('Snack Box', 'snack_box', 'Individual snack boxes perfect for events and meetings', 120.00, 10, 200, '[
+  "Premium snack box",
+  "1 beverage bottle",
+  "Disposable utensils",
+  "Napkins",
+  "Individual packaging"
+]'::jsonb, 6)
 
-ON CONFLICT (package_name) DO NOTHING;
+ON CONFLICT (package_name) DO UPDATE SET
+  description = EXCLUDED.description,
+  price_per_person = EXCLUDED.price_per_person,
+  min_guests = EXCLUDED.min_guests,
+  max_guests = EXCLUDED.max_guests,
+  included_items = EXCLUDED.included_items,
+  sort_order = EXCLUDED.sort_order,
+  updated_at = CURRENT_TIMESTAMP;
 
--- Row Level Security (RLS)
+-- Enable Row Level Security (RLS)
 ALTER TABLE bookings ENABLE ROW LEVEL SECURITY;
 ALTER TABLE service_packages ENABLE ROW LEVEL SECURITY;
 
--- Policy สำหรับ service packages (อ่านได้ทุกคน)
-DROP POLICY IF EXISTS "Public can read service packages" ON service_packages;
-CREATE POLICY "Public can read service packages" ON service_packages
+-- Create admin role check function
+CREATE OR REPLACE FUNCTION is_admin()
+RETURNS BOOLEAN AS $$
+BEGIN
+  -- Check if user has admin role in JWT or auth.users metadata
+  RETURN (
+    auth.jwt() ->> 'role' = 'admin' OR
+    auth.jwt() -> 'user_metadata' ->> 'role' = 'admin' OR
+    auth.jwt() -> 'app_metadata' ->> 'role' = 'admin'
+  );
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Service Packages Policies (Public read access for active packages)
+DROP POLICY IF EXISTS "Public can read active service packages" ON service_packages;
+CREATE POLICY "Public can read active service packages" ON service_packages
   FOR SELECT USING (is_active = true);
 
--- Policy สำหรับการสร้างการจอง (ทุกคนสร้างได้)
-DROP POLICY IF EXISTS "Anyone can create bookings" ON bookings;
-CREATE POLICY "Anyone can create bookings" ON bookings
+DROP POLICY IF EXISTS "Admin can manage service packages" ON service_packages;
+CREATE POLICY "Admin can manage service packages" ON service_packages
+  FOR ALL USING (is_admin());
+
+-- Bookings Policies (More restrictive for production)
+
+-- Allow anyone to create bookings (customer-facing booking form)
+DROP POLICY IF EXISTS "Public can create bookings" ON bookings;
+CREATE POLICY "Public can create bookings" ON bookings
   FOR INSERT WITH CHECK (true);
 
--- Policy สำหรับอ่านการจอง (อ่านได้ทุกคน - สำหรับ demo)
--- ในการใช้งานจริงควรจำกัดเฉพาะ admin หรือ owner
-DROP POLICY IF EXISTS "Public can read bookings" ON bookings;
-CREATE POLICY "Public can read bookings" ON bookings
-  FOR SELECT USING (true);
+-- Allow customers to read their own bookings by phone/email
+DROP POLICY IF EXISTS "Customers can read own bookings" ON bookings;
+CREATE POLICY "Customers can read own bookings" ON bookings
+  FOR SELECT USING (
+    -- Allow if admin
+    is_admin() OR
+    -- Allow if accessing via booking reference (public lookup)
+    booking_reference = current_setting('app.booking_reference', true) OR
+    -- Allow if authenticated user matches customer email
+    (auth.jwt() ->> 'email' = customer_email)
+  );
 
--- Policy สำหรับแก้ไขการจอง (แก้ไขได้ทุกคน - สำหรับ demo) 
--- ในการใช้งานจริงควรจำกัดเฉพาะ admin
-DROP POLICY IF EXISTS "Public can update bookings" ON bookings;
-CREATE POLICY "Public can update bookings" ON bookings
-  FOR UPDATE USING (true);
+-- Only admin can update bookings
+DROP POLICY IF EXISTS "Admin can update bookings" ON bookings;
+CREATE POLICY "Admin can update bookings" ON bookings
+  FOR UPDATE USING (is_admin());
 
--- สร้างข้อมูลทดสอบ (ถ้าต้องการ)
+-- Only admin can delete bookings
+DROP POLICY IF EXISTS "Admin can delete bookings" ON bookings;
+CREATE POLICY "Admin can delete bookings" ON bookings
+  FOR DELETE USING (is_admin());
+
+-- Function to lookup booking by reference (bypasses RLS for public lookup)
+CREATE OR REPLACE FUNCTION public_booking_lookup(ref_code TEXT)
+RETURNS TABLE (
+  booking_reference TEXT,
+  customer_name TEXT,
+  event_type TEXT,
+  event_date DATE,
+  event_time TIME,
+  guest_count INTEGER,
+  service_type TEXT,
+  booking_status TEXT,
+  created_at TIMESTAMPTZ
+) AS $$
+BEGIN
+  -- Validate reference format
+  IF ref_code !~ '^FZ[0-9]{10}$' THEN
+    RAISE EXCEPTION 'Invalid booking reference format';
+  END IF;
+  
+  -- Set session variable for RLS policy
+  PERFORM set_config('app.booking_reference', ref_code, true);
+  
+  RETURN QUERY
+  SELECT 
+    b.booking_reference,
+    b.customer_name,
+    b.event_type::TEXT,
+    b.event_date,
+    b.event_time,
+    b.guest_count,
+    b.service_type,
+    b.booking_status::TEXT,
+    b.created_at
+  FROM bookings b
+  WHERE b.booking_reference = ref_code;
+  
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Additional utility functions for the booking system
+
+-- Function to get booking statistics
+CREATE OR REPLACE FUNCTION get_booking_stats(start_date DATE DEFAULT NULL, end_date DATE DEFAULT NULL)
+RETURNS TABLE (
+  total_bookings BIGINT,
+  pending_bookings BIGINT,
+  confirmed_bookings BIGINT,
+  completed_bookings BIGINT,
+  cancelled_bookings BIGINT,
+  total_revenue DECIMAL,
+  average_booking_value DECIMAL
+) AS $$
+BEGIN
+  RETURN QUERY
+  SELECT 
+    COUNT(*) as total_bookings,
+    COUNT(*) FILTER (WHERE booking_status = 'pending') as pending_bookings,
+    COUNT(*) FILTER (WHERE booking_status = 'confirmed') as confirmed_bookings,
+    COUNT(*) FILTER (WHERE booking_status = 'completed') as completed_bookings,
+    COUNT(*) FILTER (WHERE booking_status = 'cancelled') as cancelled_bookings,
+    COALESCE(SUM(final_price), 0) as total_revenue,
+    COALESCE(AVG(final_price), 0) as average_booking_value
+  FROM bookings
+  WHERE (start_date IS NULL OR event_date >= start_date)
+    AND (end_date IS NULL OR event_date <= end_date);
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Function to check booking availability on specific date
+CREATE OR REPLACE FUNCTION check_booking_availability(check_date DATE, required_duration INTEGER DEFAULT 4)
+RETURNS TABLE (
+  date_available BOOLEAN,
+  existing_bookings INTEGER,
+  suggested_times TIME[]
+) AS $$
+DECLARE
+  existing_count INTEGER;
+  available_slots TIME[] := ARRAY[]::TIME[];
+  slot_time TIME;
+BEGIN
+  -- Count existing confirmed bookings on the date
+  SELECT COUNT(*) INTO existing_count
+  FROM bookings
+  WHERE event_date = check_date 
+    AND booking_status IN ('confirmed', 'pending');
+  
+  -- Suggest available time slots (basic logic)
+  FOR slot_time IN 
+    SELECT time_slot FROM (
+      VALUES ('10:00'::TIME), ('12:00'::TIME), ('14:00'::TIME), 
+             ('16:00'::TIME), ('18:00'::TIME), ('20:00'::TIME)
+    ) AS slots(time_slot)
+  LOOP
+    -- Check if slot is available (simplified logic)
+    IF NOT EXISTS (
+      SELECT 1 FROM bookings 
+      WHERE event_date = check_date 
+        AND booking_status IN ('confirmed', 'pending')
+        AND event_time = slot_time
+    ) THEN
+      available_slots := array_append(available_slots, slot_time);
+    END IF;
+  END LOOP;
+  
+  RETURN QUERY
+  SELECT 
+    (existing_count < 5) as date_available,  -- Max 5 events per day
+    existing_count,
+    available_slots;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Create sample test data (commented out for production)
 /*
+-- Sample bookings for testing (uncomment if needed)
 INSERT INTO bookings (
   customer_name, customer_phone, customer_email, 
-  event_type, event_date, guest_count, service_type, budget_range
+  event_type, event_date, guest_count, service_type, 
+  budget_range, estimated_price, booking_status
 ) VALUES 
-('ทดสอบ ระบบ', '081-234-5678', 'test@example.com', 
- 'wedding', '2024-12-25', 100, 'buffet_premium', '50000-100000');
+('John Smith', '081-234-5678', 'john@example.com', 
+ 'wedding', CURRENT_DATE + INTERVAL '30 days', 150, 'buffet_premium', 
+ '50000-100000', 97500.00, 'confirmed'),
+
+('Jane Doe', '082-345-6789', 'jane@example.com',
+ 'corporate', CURRENT_DATE + INTERVAL '15 days', 80, 'buffet_standard',
+ '30000-50000', 36000.00, 'pending'),
+
+('Bob Johnson', '083-456-7890', 'bob@example.com',
+ 'birthday', CURRENT_DATE + INTERVAL '7 days', 50, 'cocktail',
+ '10000-20000', 16000.00, 'confirmed');
 */
 
--- แสดงผลลัพธ์
+-- Performance monitoring views (for admin use)
+CREATE OR REPLACE VIEW v_booking_summary AS
 SELECT 
-  'สร้างฐานข้อมูลสำเร็จ!' as message,
-  (SELECT COUNT(*) FROM bookings) as total_bookings,
-  (SELECT COUNT(*) FROM service_packages) as total_packages;
+  DATE_TRUNC('month', event_date) as event_month,
+  booking_status,
+  COUNT(*) as booking_count,
+  SUM(guest_count) as total_guests,
+  AVG(guest_count) as avg_guests_per_booking,
+  SUM(final_price) as total_revenue,
+  AVG(final_price) as avg_booking_value
+FROM bookings
+WHERE event_date >= CURRENT_DATE - INTERVAL '1 year'
+GROUP BY DATE_TRUNC('month', event_date), booking_status
+ORDER BY event_month DESC, booking_status;
 
--- แสดงแพ็กเกจทั้งหมด
-SELECT package_name, service_type, price_per_person FROM service_packages ORDER BY price_per_person;
+-- Grant permissions to authenticated users for the view
+GRANT SELECT ON v_booking_summary TO authenticated;
+
+-- Final database setup confirmation
+SELECT 
+  'Database setup completed successfully!' as message,
+  (SELECT COUNT(*) FROM bookings) as total_bookings,
+  (SELECT COUNT(*) FROM service_packages) as total_packages,
+  (SELECT COUNT(*) FROM service_packages WHERE is_active = true) as active_packages;
+
+-- Display all service packages
+SELECT 
+  package_name,
+  service_type,
+  price_per_person,
+  min_guests,
+  max_guests,
+  is_active
+FROM service_packages 
+ORDER BY sort_order, price_per_person;
