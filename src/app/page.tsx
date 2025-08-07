@@ -126,6 +126,47 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Online Booking CTA Section */}
+      <section className="py-16 bg-gradient-to-r from-orange-500 to-red-500">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="bg-white rounded-3xl shadow-2xl p-8 md:p-12 transform hover:scale-105 transition-all duration-300">
+            <div className="mb-6">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-orange-500 to-red-500 rounded-full mb-4 shadow-lg">
+                <span className="text-2xl text-white">📋</span>
+              </div>
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                ต้องการจองบริการ?
+              </h2>
+              <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto mb-8 leading-relaxed">
+                ใช้ระบบจองออนไลน์ใหม่ของเรา กรอกข้อมูลง่าย ๆ แล้วทีมงานจะติดต่อกลับ
+              </p>
+            </div>
+            
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <a 
+                href="/booking" 
+                className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-8 py-4 rounded-full font-bold text-lg hover:from-orange-600 hover:to-red-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center gap-2"
+              >
+                🚀 จองออนไลน์เลย
+              </a>
+              <div className="text-gray-500 text-sm">
+                หรือ
+              </div>
+              <a 
+                href="tel:0815146939" 
+                className="border-2 border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white px-6 py-3 rounded-full font-semibold transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 flex items-center gap-2"
+              >
+                📞 โทรสอบถาม
+              </a>
+            </div>
+            
+            <div className="mt-6 text-sm text-gray-500">
+              ⚡ รับใบเสนอราคาฟรีภายใน 24 ชั่วโมง
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Footer */}
       <footer className="bg-gray-800 text-white py-8">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">

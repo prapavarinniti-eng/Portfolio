@@ -107,22 +107,170 @@ export default function BookingPage() {
             </div>
           </div>
 
-          {/* CTA */}
+          {/* Quick Booking Form */}
+          <div className="bg-white rounded-2xl shadow-2xl p-8 mb-8">
+            <div className="text-center mb-8">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-orange-500 to-red-500 rounded-full mb-4 shadow-lg">
+                <span className="text-2xl text-white">🚀</span>
+              </div>
+              <h2 className="text-3xl font-bold text-gray-900 mb-4">จองด่วนออนไลน์</h2>
+              <p className="text-gray-600">กรอกข้อมูลพื้นฐาน เราจะติดต่อกลับภายใน 2 ชั่วโมง</p>
+            </div>
+
+            <form className="space-y-6 max-w-2xl mx-auto" onSubmit={(e) => {
+              e.preventDefault();
+              const formData = new FormData(e.target as HTMLFormElement);
+              const data = Object.fromEntries(formData.entries());
+              
+              // Create WhatsApp message
+              const message = `🍽️ Fuzio Catering - จองบริการออนไลน์
+              
+📋 รายละเอียดการจอง:
+👤 ชื่อ: ${data.name}
+📞 เบอร์: ${data.phone}
+📧 อีเมล: ${data.email}
+🎉 ประเภทงาน: ${data.eventType}
+📅 วันที่: ${data.eventDate}
+👥 จำนวนแขก: ${data.guestCount} คน
+📍 สถานที่: ${data.location}
+💬 รายละเอียด: ${data.details || 'ไม่ได้ระบุ'}
+
+ขอใบเสนอราคาครับ/ค่ะ`;
+
+              const whatsappUrl = `https://wa.me/66815146939?text=${encodeURIComponent(message)}`;
+              window.open(whatsappUrl, '_blank');
+              
+              // Show success message
+              alert('ข้อมูลถูกส่งไปยัง WhatsApp แล้ว กรุณาส่งข้อความเพื่อติดต่อเรา');
+            }}>
+              <div className="grid md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">ชื่อ-นามสกุล *</label>
+                  <input 
+                    type="text" 
+                    name="name" 
+                    required 
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500" 
+                    placeholder="กรอกชื่อ-นามสกุล"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">เบอร์โทร *</label>
+                  <input 
+                    type="tel" 
+                    name="phone" 
+                    required 
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500" 
+                    placeholder="081-234-5678"
+                  />
+                </div>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">อีเมล *</label>
+                <input 
+                  type="email" 
+                  name="email" 
+                  required 
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500" 
+                  placeholder="your@email.com"
+                />
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">ประเภทงาน *</label>
+                  <select 
+                    name="eventType" 
+                    required 
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                  >
+                    <option value="">เลือกประเภทงาน</option>
+                    <option value="งานแต่งงาน">💒 งานแต่งงาน</option>
+                    <option value="งานบริษัท">🏢 งานบริษัท</option>
+                    <option value="งานวันเกิด">🎂 งานวันเกิด</option>
+                    <option value="งานรับปริญญา">🎓 งานรับปริญญา</option>
+                    <option value="งานบุญ">🙏 งานบุญ</option>
+                    <option value="อื่นๆ">✨ อื่นๆ</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">วันที่งาน *</label>
+                  <input 
+                    type="date" 
+                    name="eventDate" 
+                    required 
+                    min={new Date().toISOString().split('T')[0]}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                  />
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">จำนวนแขก *</label>
+                  <select 
+                    name="guestCount" 
+                    required 
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
+                  >
+                    <option value="">จำนวนแขก</option>
+                    <option value="10-30">10-30 คน</option>
+                    <option value="31-50">31-50 คน</option>
+                    <option value="51-100">51-100 คน</option>
+                    <option value="101-200">101-200 คน</option>
+                    <option value="201-500">201-500 คน</option>
+                    <option value="500+">มากกว่า 500 คน</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">สถานที่</label>
+                  <input 
+                    type="text" 
+                    name="location" 
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500" 
+                    placeholder="โรงแรม/ห้องจัดเลี้ยง/บ้าน"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">รายละเอียดเพิ่มเติม</label>
+                <textarea 
+                  name="details" 
+                  rows={3}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500" 
+                  placeholder="ธีม สี ประเภทอาหารที่ต้องการ งบประมาณ หรือความต้องการพิเศษอื่น ๆ"
+                ></textarea>
+              </div>
+
+              <div className="text-center">
+                <button 
+                  type="submit"
+                  className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-8 py-4 rounded-full font-bold hover:from-green-600 hover:to-emerald-600 transition-all shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center gap-2 mx-auto"
+                >
+                  💬 ส่งไป WhatsApp
+                </button>
+                <p className="text-sm text-gray-500 mt-3">
+                  จะเปิด WhatsApp พร้อมข้อความแล้ว กรุณากดส่งเพื่อติดต่อเรา
+                </p>
+              </div>
+            </form>
+          </div>
+
+          {/* Alternative Contact */}
           <div className="bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl shadow-2xl p-8 text-white">
-            <h2 className="text-3xl font-bold mb-4">พร้อมให้บริการแล้ว!</h2>
-            <p className="text-xl mb-8 opacity-90">
-              ติดต่อเราวันนี้เพื่อปรึกษาและรับใบเสนอราคาฟรี
-            </p>
+            <h2 className="text-2xl font-bold mb-4 text-center">หรือติดต่อโดยตรง</h2>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a 
                 href="tel:0815146939"
-                className="bg-white text-orange-600 px-8 py-4 rounded-full font-bold hover:bg-gray-100 transition-all shadow-lg hover:shadow-xl transform hover:scale-105"
+                className="bg-white text-orange-600 px-8 py-4 rounded-full font-bold hover:bg-gray-100 transition-all shadow-lg hover:shadow-xl transform hover:scale-105 text-center"
               >
                 📞 081-514-6939
               </a>
               <a 
                 href="mailto:prapavarinniti@gmail.com"
-                className="bg-white text-orange-600 px-8 py-4 rounded-full font-bold hover:bg-gray-100 transition-all shadow-lg hover:shadow-xl transform hover:scale-105"
+                className="bg-white text-orange-600 px-8 py-4 rounded-full font-bold hover:bg-gray-100 transition-all shadow-lg hover:shadow-xl transform hover:scale-105 text-center"
               >
                 📧 ส่งอีเมล
               </a>
