@@ -71,10 +71,11 @@ export default function AdminInquiries() {
   const getEventTypeDisplay = (eventType: string) => {
     const types: Record<string, string> = {
       wedding: '💒 งานแต่งงาน',
-      merit: '🙏 งานบุญ',
+      seminar: '🙏 งานบุญ',
       corporate: '🏢 งานบริษัท',
       birthday: '🎂 งานวันเกิด',
-      graduation: '🎓 งานรับปริญญา',
+      anniversary: '🎓 งานรับปริญญา',
+      conference: '📚 งานประชุม',
       other: '✨ อื่นๆ'
     };
     return types[eventType] || eventType;

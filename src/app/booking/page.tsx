@@ -121,8 +121,8 @@ export default function BookingPage() {
     { value: 'wedding', label: 'งานแต่งงาน', icon: '💒', color: 'pink' },
     { value: 'corporate', label: 'งานบริษัท', icon: '🏢', color: 'blue' },
     { value: 'birthday', label: 'งานวันเกิด', icon: '🎂', color: 'yellow' },
-    { value: 'graduation', label: 'งานรับปริญญา', icon: '🎓', color: 'green' },
-    { value: 'merit', label: 'งานบุญ', icon: '🙏', color: 'purple' },
+    { value: 'anniversary', label: 'งานรับปริญญา', icon: '🎓', color: 'green' },
+    { value: 'seminar', label: 'งานบุญ', icon: '🙏', color: 'purple' },
     { value: 'other', label: 'อื่นๆ', icon: '✨', color: 'gray' }
   ];
 
