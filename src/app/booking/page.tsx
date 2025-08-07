@@ -1,63 +1,6 @@
-'use client';
-
-import { useState } from 'react';
 import Link from 'next/link';
 
 export default function BookingPage() {
-  const [formData, setFormData] = useState({
-    name: '',
-    phone: '',
-    email: '',
-    eventType: '',
-    eventDate: '',
-    guestCount: '',
-    details: ''
-  });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [message, setMessage] = useState('');
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setMessage('');
-
-    try {
-      const response = await fetch('/api/bookings', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      });
-
-      const result = await response.json();
-
-      if (response.ok) {
-        setMessage(`✅ จองสำเร็จ! รหัสการจอง: ${result.reference}`);
-        setFormData({
-          name: '',
-          phone: '',
-          email: '',
-          eventType: '',
-          eventDate: '',
-          guestCount: '',
-          details: ''
-        });
-      } else {
-        setMessage(`❌ เกิดข้อผิดพลาด: ${result.error || 'ไม่สามารถจองได้'}`);
-      }
-    } catch (error) {
-      setMessage('❌ เกิดข้อผิดพลาดในการส่งข้อมูล');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-red-50 to-pink-50">
       {/* Navigation */}
@@ -76,171 +19,113 @@ export default function BookingPage() {
         </div>
       </nav>
 
-      <div className="py-12 px-4">
-        <div className="max-w-2xl mx-auto">
+      <div className="py-16 px-4">
+        <div className="max-w-4xl mx-auto text-center">
           {/* Header */}
-          <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">📋 จองบริการ</h1>
-            <p className="text-xl text-gray-600">กรอกข้อมูลเพื่อจองบริการจัดเลี้ยง</p>
+          <div className="mb-12">
+            <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-orange-500 to-red-500 rounded-full mb-8 shadow-xl">
+              <span className="text-3xl text-white">📞</span>
+            </div>
+            <h1 className="text-5xl font-bold text-gray-900 mb-6">
+              ติดต่อจองบริการ
+            </h1>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+              พร้อมให้บริการจัดเลี้ยงครบวงจร สำหรับทุกโอกาสพิเศษของคุณ<br/>
+              ติดต่อเราโดยตรงเพื่อปรึกษารายละเอียดและรับใบเสนอราคา
+            </p>
           </div>
 
-          {/* Form */}
-          <div className="bg-white rounded-lg shadow-xl p-8">
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* ชื่อ-นามสกุล */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  ชื่อ-นามสกุล *
-                </label>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                  placeholder="กรอกชื่อ-นามสกุล"
-                />
+          {/* Contact Cards */}
+          <div className="grid md:grid-cols-2 gap-8 mb-12">
+            {/* Phone Contact */}
+            <div className="bg-white rounded-2xl shadow-xl p-8 hover:shadow-2xl transition-all hover:scale-105">
+              <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <span className="text-2xl">📱</span>
               </div>
-
-              {/* เบอร์โทร */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  เบอร์โทรศัพท์ *
-                </label>
-                <input
-                  type="tel"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                  placeholder="081-234-5678"
-                />
-              </div>
-
-              {/* อีเมล */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  อีเมล *
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                  placeholder="your@email.com"
-                />
-              </div>
-
-              {/* ประเภทงาน */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  ประเภทงาน *
-                </label>
-                <select
-                  name="eventType"
-                  value={formData.eventType}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                >
-                  <option value="">เลือกประเภทงาน</option>
-                  <option value="งานแต่งงาน">งานแต่งงาน</option>
-                  <option value="งานบริษัท">งานบริษัท</option>
-                  <option value="งานวันเกิด">งานวันเกิด</option>
-                  <option value="งานรับปริญญา">งานรับปริญญา</option>
-                  <option value="งานบุญ">งานบุญ</option>
-                  <option value="อื่นๆ">อื่นๆ</option>
-                </select>
-              </div>
-
-              {/* วันที่งาน */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  วันที่จัดงาน *
-                </label>
-                <input
-                  type="date"
-                  name="eventDate"
-                  value={formData.eventDate}
-                  onChange={handleChange}
-                  required
-                  min={new Date().toISOString().split('T')[0]}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                />
-              </div>
-
-              {/* จำนวนแขก */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  จำนวนแขก (คน) *
-                </label>
-                <input
-                  type="number"
-                  name="guestCount"
-                  value={formData.guestCount}
-                  onChange={handleChange}
-                  required
-                  min="10"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                  placeholder="จำนวนแขก"
-                />
-              </div>
-
-              {/* รายละเอียดเพิ่มเติม */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  รายละเอียดเพิ่มเติม
-                </label>
-                <textarea
-                  name="details"
-                  value={formData.details}
-                  onChange={handleChange}
-                  rows={4}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
-                  placeholder="บอกเราเกี่ยวกับงานของคุณ เช่น สถานที่, ธีม, ความต้องการพิเศษ..."
-                />
-              </div>
-
-              {/* Submit Button */}
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white py-4 px-6 rounded-lg font-semibold hover:from-orange-600 hover:to-red-600 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 transition-all shadow-lg"
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">โทรศัพท์</h3>
+              <p className="text-3xl font-bold text-orange-600 mb-4">081-514-6939</p>
+              <p className="text-gray-600 mb-6">
+                เปิดรับสาย: จันทร์-เสาร์ 8:00-20:00<br/>
+                อาทิตย์ 9:00-18:00
+              </p>
+              <a 
+                href="tel:0815146939"
+                className="inline-block bg-gradient-to-r from-orange-500 to-red-500 text-white px-8 py-3 rounded-full font-semibold hover:from-orange-600 hover:to-red-600 transition-all shadow-lg hover:shadow-xl transform hover:scale-105"
               >
-                {isSubmitting ? (
-                  <div className="flex items-center justify-center">
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
-                    กำลังส่งข้อมูล...
-                  </div>
-                ) : (
-                  '✅ ส่งข้อมูลการจอง'
-                )}
-              </button>
-            </form>
+                📞 โทรเลย
+              </a>
+            </div>
 
-            {/* Message */}
-            {message && (
-              <div className={`mt-6 p-4 rounded-lg text-center font-medium ${
-                message.includes('✅') 
-                  ? 'bg-green-100 text-green-800 border border-green-200' 
-                  : 'bg-red-100 text-red-800 border border-red-200'
-              }`}>
-                {message}
+            {/* Email Contact */}
+            <div className="bg-white rounded-2xl shadow-xl p-8 hover:shadow-2xl transition-all hover:scale-105">
+              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <span className="text-2xl">📧</span>
               </div>
-            )}
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">อีเมล</h3>
+              <p className="text-xl font-bold text-blue-600 mb-4 break-all">prapavarinniti@gmail.com</p>
+              <p className="text-gray-600 mb-6">
+                ส่งรายละเอียดงาน ภาพอ้างอิง<br/>
+                เราจะตอบกลับภายใน 24 ชั่วโมง
+              </p>
+              <a 
+                href="mailto:prapavarinniti@gmail.com?subject=สอบถามบริการจัดเลี้ยง&body=สวัสดีครับ/ค่ะ%0A%0Aต้องการสอบถามบริการจัดเลี้ยง%0A%0Aประเภทงาน: %0Aวันที่: %0าจำนวนแขก: %0าสถานที่: %0A%0Aขอบคุณครับ/ค่ะ"
+                className="inline-block bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-8 py-3 rounded-full font-semibold hover:from-blue-600 hover:to-indigo-600 transition-all shadow-lg hover:shadow-xl transform hover:scale-105"
+              >
+                📧 ส่งอีเมล
+              </a>
+            </div>
+          </div>
 
-            {/* Contact Info */}
-            <div className="mt-8 text-center text-gray-600">
-              <p className="text-sm">หรือติดต่อเราโดยตรง</p>
-              <div className="mt-2 space-y-1">
-                <p>📞 <strong>081-514-6939</strong></p>
-                <p>📧 <strong>prapavarinniti@gmail.com</strong></p>
-                <p>🏢 Royal Suite Hotel, Bangkok</p>
-              </div>
+          {/* Office Info */}
+          <div className="bg-white rounded-2xl shadow-xl p-8 mb-12">
+            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <span className="text-2xl">🏢</span>
+            </div>
+            <h3 className="text-2xl font-bold text-gray-900 mb-4">สำนักงาน</h3>
+            <p className="text-xl text-gray-700 mb-4">Royal Suite Hotel, Bangkok</p>
+            <p className="text-gray-600">
+              📍 ให้บริการทั่วกรุงเทพฯ และปริมณฑล<br/>
+              🚚 มีบริการขนส่งอุปกรณ์และตกแต่งสถานที่
+            </p>
+          </div>
+
+          {/* Service Types */}
+          <div className="mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 mb-8">บริการของเรา</h2>
+            <div className="grid md:grid-cols-3 gap-6">
+              {[
+                { icon: '💒', title: 'งานแต่งงาน', desc: 'งานแต่งงาน งานหมั้น งานฉลอง' },
+                { icon: '🏢', title: 'งานบริษัท', desc: 'สัมนา ประชุม งานเลี้ยงปีใหม่' },
+                { icon: '🎂', title: 'งานเฉลิมฉลอง', desc: 'วันเกิด รับปริญญา งานบุญ' }
+              ].map((service, index) => (
+                <div key={index} className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all">
+                  <div className="text-4xl mb-4">{service.icon}</div>
+                  <h4 className="text-xl font-bold text-gray-900 mb-2">{service.title}</h4>
+                  <p className="text-gray-600">{service.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* CTA */}
+          <div className="bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl shadow-2xl p-8 text-white">
+            <h2 className="text-3xl font-bold mb-4">พร้อมให้บริการแล้ว!</h2>
+            <p className="text-xl mb-8 opacity-90">
+              ติดต่อเราวันนี้เพื่อปรึกษาและรับใบเสนอราคาฟรี
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <a 
+                href="tel:0815146939"
+                className="bg-white text-orange-600 px-8 py-4 rounded-full font-bold hover:bg-gray-100 transition-all shadow-lg hover:shadow-xl transform hover:scale-105"
+              >
+                📞 081-514-6939
+              </a>
+              <a 
+                href="mailto:prapavarinniti@gmail.com"
+                className="bg-white text-orange-600 px-8 py-4 rounded-full font-bold hover:bg-gray-100 transition-all shadow-lg hover:shadow-xl transform hover:scale-105"
+              >
+                📧 ส่งอีเมล
+              </a>
             </div>
           </div>
         </div>
