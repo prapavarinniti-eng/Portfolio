@@ -1,7 +1,7 @@
 FORCE_DEPLOY=true
-TIMESTAMP=2025-08-07T16:00:00Z
-VERSION=booking-system-v2.6
-CHANGES=fix-booking-reference-format-critical
+TIMESTAMP=2025-08-07T16:10:00Z
+VERSION=booking-system-v2.7-EMERGENCY
+CHANGES=clear-render-cache-deploy-new-version
 
 # This file is used to force Render deployment
 # by creating a change that triggers the build
