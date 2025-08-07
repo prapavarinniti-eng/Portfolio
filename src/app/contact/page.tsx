@@ -89,7 +89,7 @@ export default function Contact() {
                 ติดต่อ
                 <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-orange-600"></span>
               </a>
-              <a href="tel:+66657165037" className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-2 rounded-full hover:from-orange-600 hover:to-red-600 transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105">
+              <a href="tel:+66815149639" className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-2 rounded-full hover:from-orange-600 hover:to-red-600 transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105">
                 📞 โทร
               </a>
             </div>
@@ -143,8 +143,8 @@ export default function Contact() {
                 📞 ติดต่อ
               </a>
               <div className="pt-2">
-                <a href="tel:+66657165037" className="block mx-3 px-4 py-2 bg-gradient-to-r from-orange-500 to-red-500 text-white text-center rounded-full hover:from-orange-600 hover:to-red-600 transition-all duration-200 shadow-md">
-                  📞 โทร: 065-716-5037
+                <a href="tel:+66815149639" className="block mx-3 px-4 py-2 bg-gradient-to-r from-orange-500 to-red-500 text-white text-center rounded-full hover:from-orange-600 hover:to-red-600 transition-all duration-200 shadow-md">
+                  📞 โทร: 081-514-9639
                 </a>
               </div>
             </div>
@@ -355,7 +355,7 @@ export default function Contact() {
                       </div>
                       <div className="ml-4 flex-1">
                         <h3 className="text-xl font-bold text-gray-900 mb-1">โทรศัพท์</h3>
-                        <p className="text-lg font-semibold text-orange-600">065-716-5037</p>
+                        <p className="text-lg font-semibold text-orange-600">081-514-9639</p>
                         <p className="text-sm text-gray-500 flex items-center mt-1">
                           <span className="mr-2">🕐</span>
                           เปิดให้บริการ 8:00 - 20:00 น.
@@ -372,7 +372,7 @@ export default function Contact() {
                       </div>
                       <div className="ml-4 flex-1">
                         <h3 className="text-xl font-bold text-gray-900 mb-1">อีเมล</h3>
-                        <p className="text-lg font-semibold text-blue-600">info@fuziocatering.com</p>
+                        <p className="text-lg font-semibold text-blue-600">prapavarinniti@gmail.com</p>
                         <p className="text-sm text-gray-500 flex items-center mt-1">
                           <span className="mr-2">⚡</span>
                           ตอบกลับภายใน 24 ชั่วโมง
@@ -471,7 +471,7 @@ export default function Contact() {
                   },
                   {
                     question: "💰 ราคาเริ่มต้นเท่าไหร่?",
-                    answer: "ราคาขึ้นอยู่กับประเภทงาน จำนวนคน และเมนูที่เลือก เริ่มต้นที่ 150 บาทต่อคน สำหรับเมนูมาตรฐาน สอบถามใบเสนอราคาฟรีได้ที่เบอร์ 065-716-5037"
+                    answer: "ราคาขึ้นอยู่กับประเภทงาน จำนวนคน และเมนูที่เลือก เริ่มต้นที่ 150 บาทต่อคน สำหรับเมนูมาตรฐาน สอบถามใบเสนอราคาฟรีได้ที่เบอร์ 081-514-9639"
                   },
                   {
                     question: "🍽️ มีเมนูอาหารให้เลือกหรือไม่?",
@@ -522,14 +522,14 @@ export default function Contact() {
                   </p>
                   <div className="flex flex-col sm:flex-row gap-4 justify-center">
                     <a
-                      href="tel:065-716-5037"
+                      href="tel:081-514-9639"
                       className="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-2xl font-semibold hover:from-orange-600 hover:to-red-600 transition-all duration-300 transform hover:scale-105"
                     >
                       <span className="mr-2">📞</span>
-                      โทรเลย 065-716-5037
+                      โทรเลย 081-514-9639
                     </a>
                     <a
-                      href="mailto:info@fuziocatering.com"
+                      href="mailto:prapavarinniti@gmail.com"
                       className="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-2xl font-semibold hover:from-blue-600 hover:to-purple-600 transition-all duration-300 transform hover:scale-105"
                     >
                       <span className="mr-2">📧</span>
@@ -568,7 +568,7 @@ export default function Contact() {
                 <span className="text-2xl">📞</span>
               </div>
               <h4 className="text-lg font-semibold mb-2">โทรหาเรา</h4>
-              <p className="text-orange-400 font-bold text-lg">065-716-5037</p>
+              <p className="text-orange-400 font-bold text-lg">081-514-9639</p>
               <p className="text-sm text-gray-400">8:00 - 20:00 น.</p>
             </div>
             
@@ -577,7 +577,7 @@ export default function Contact() {
                 <span className="text-2xl">📧</span>
               </div>
               <h4 className="text-lg font-semibold mb-2">อีเมล</h4>
-              <p className="text-blue-400 font-bold">info@fuziocatering.com</p>
+              <p className="text-blue-400 font-bold">prapavarinniti@gmail.com</p>
               <p className="text-sm text-gray-400">ตอบภายใน 24 ชม.</p>
             </div>
             
