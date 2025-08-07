@@ -1,7 +1,7 @@
 FORCE_DEPLOY=true
-TIMESTAMP=2025-08-07T16:15:00Z
-VERSION=booking-system-v2.8-CONSTRAINT-FIX
-CHANGES=fixed-database-constraint-violations
+TIMESTAMP=2025-08-07T16:20:00Z
+VERSION=booking-system-v2.9-DATABASE-RESET
+CHANGES=added-database-reset-script-simple-booking-table
 
 # This file is used to force Render deployment
 # by creating a change that triggers the build
