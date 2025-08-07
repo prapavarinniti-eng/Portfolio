@@ -250,7 +250,7 @@ export default function Contact() {
                           onChange={handleInputChange}
                           required
                           className="w-full px-5 py-4 bg-white/50 border-2 border-gray-200/50 rounded-2xl focus:ring-4 focus:ring-orange-500/20 focus:border-orange-500 transition-all duration-300 placeholder-gray-400 backdrop-blur-sm group-hover:border-orange-300"
-                          placeholder="081-234-5678"
+                          placeholder="081-514-6939"
                         />
                       </div>
 
@@ -267,7 +267,7 @@ export default function Contact() {
                           onChange={handleInputChange}
                           required
                           className="w-full px-5 py-4 bg-white/50 border-2 border-gray-200/50 rounded-2xl focus:ring-4 focus:ring-orange-500/20 focus:border-orange-500 transition-all duration-300 placeholder-gray-400 backdrop-blur-sm group-hover:border-orange-300"
-                          placeholder="example@email.com"
+                          placeholder="prapavarinniti@gmail.com"
                         />
                       </div>
 
