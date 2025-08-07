@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     
-    // Validate required fields
+    // Validate required fields (removed serviceType as it will be discussed with admin)
     const requiredFields = [
       'customerName',
       'customerPhone', 
@@ -60,7 +60,6 @@ export async function POST(request: NextRequest) {
       'eventDate',
       'eventTime',
       'guestCount',
-      'serviceType',
       'budgetRange'
     ];
 
@@ -96,8 +95,8 @@ export async function POST(request: NextRequest) {
       // จำนวนคน
       guest_count: body.guestCount,
       
-      // ประเภทบริการ
-      service_type: body.serviceType,
+      // ประเภทบริการ (admin will discuss details later)
+      service_type: body.serviceType || 'to_be_discussed',
       menu_preferences: body.menuPreferences || '',
       
       // งบประมาณ
