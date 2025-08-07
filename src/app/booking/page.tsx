@@ -114,17 +114,45 @@ export default function BookingPage() {
                 <span className="text-2xl text-white">🚀</span>
               </div>
               <h2 className="text-3xl font-bold text-gray-900 mb-4">จองด่วนออนไลน์</h2>
-              <p className="text-gray-600">กรอกข้อมูลพื้นฐาน เราจะติดต่อกลับภายใน 2 ชั่วโมง</p>
+              <p className="text-gray-600">กรอกข้อมูลพื้นฐาน เราจะ<strong>บันทึกข้อมูลไว้ในระบบ</strong>และติดต่อกลับภายใน 2 ชั่วโมง</p>
             </div>
 
-            <form className="space-y-6 max-w-2xl mx-auto" onSubmit={(e) => {
+            <form className="space-y-6 max-w-2xl mx-auto" onSubmit={async (e) => {
               e.preventDefault();
-              const formData = new FormData(e.target as HTMLFormElement);
-              const data = Object.fromEntries(formData.entries());
               
-              // Create WhatsApp message
-              const message = `🍽️ Fuzio Catering - จองบริการออนไลน์
+              const submitButton = e.currentTarget.querySelector('button[type="submit"]') as HTMLButtonElement;
+              const originalText = submitButton.innerHTML;
               
+              try {
+                // Disable button and show loading
+                submitButton.disabled = true;
+                submitButton.innerHTML = '<div class="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2 inline-block"></div>กำลังส่งข้อมูล...';
+                
+                const formData = new FormData(e.target as HTMLFormElement);
+                const data = Object.fromEntries(formData.entries());
+                
+                // First, save to our system
+                const response = await fetch('/api/booking-form', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                
+                if (response.ok) {
+                  // Success! Show booking reference
+                  alert(`✅ บันทึกข้อมูลสำเร็จ!
+รหัสการจอง: ${result.reference}
+
+เราจะติดต่อกลับภายใน 2 ชั่วโมง
+กรุณาเก็บรหัสนี้ไว้สำหรับการติดตาม`);
+                  
+                  // Create WhatsApp message with booking reference
+                  const message = `🍽️ Fuzio Catering - จองบริการออนไลน์
+
+📋 รหัสการจอง: ${result.reference}
+
 📋 รายละเอียดการจอง:
 👤 ชื่อ: ${data.name}
 📞 เบอร์: ${data.phone}
@@ -132,16 +160,30 @@ export default function BookingPage() {
 🎉 ประเภทงาน: ${data.eventType}
 📅 วันที่: ${data.eventDate}
 👥 จำนวนแขก: ${data.guestCount} คน
-📍 สถานที่: ${data.location}
+📍 สถานที่: ${data.location || 'ไม่ได้ระบุ'}
 💬 รายละเอียด: ${data.details || 'ไม่ได้ระบุ'}
 
 ขอใบเสนอราคาครับ/ค่ะ`;
 
-              const whatsappUrl = `https://wa.me/66815146939?text=${encodeURIComponent(message)}`;
-              window.open(whatsappUrl, '_blank');
-              
-              // Show success message
-              alert('ข้อมูลถูกส่งไปยัง WhatsApp แล้ว กรุณาส่งข้อความเพื่อติดต่อเรา');
+                  // Open WhatsApp
+                  const whatsappUrl = `https://wa.me/66815146939?text=${encodeURIComponent(message)}`;
+                  window.open(whatsappUrl, '_blank');
+                  
+                  // Reset form
+                  (e.target as HTMLFormElement).reset();
+                  
+                } else {
+                  // Error saving data
+                  alert(`❌ เกิดข้อผิดพลาด: ${result.error}`);
+                }
+                
+              } catch (error) {
+                alert('❌ เกิดข้อผิดพลาดในการเชื่อมต่อ กรุณาลองใหม่อีกครั้ง');
+              } finally {
+                // Re-enable button
+                submitButton.disabled = false;
+                submitButton.innerHTML = originalText;
+              }
             }}>
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
@@ -247,12 +289,12 @@ export default function BookingPage() {
               <div className="text-center">
                 <button 
                   type="submit"
-                  className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-8 py-4 rounded-full font-bold hover:from-green-600 hover:to-emerald-600 transition-all shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center gap-2 mx-auto"
+                  className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-8 py-4 rounded-full font-bold hover:from-green-600 hover:to-emerald-600 transition-all shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center gap-2 mx-auto disabled:opacity-50"
                 >
-                  💬 ส่งไป WhatsApp
+                  📋 บันทึกและส่ง WhatsApp
                 </button>
                 <p className="text-sm text-gray-500 mt-3">
-                  จะเปิด WhatsApp พร้อมข้อความแล้ว กรุณากดส่งเพื่อติดต่อเรา
+                  บันทึกข้อมูลในระบบ + เปิด WhatsApp พร้อมข้อความ พร้อมรหัสจอง
                 </p>
               </div>
             </form>
