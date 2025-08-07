@@ -614,4 +614,4 @@ npm run admin              # เมนู admin แบบ interactive (แนะ
 npm run admin:selective    # เลือกอัพโหลดรูปเฉพาะ (ใหม่!)
 npm run admin:stats        # ดูสถิติรูปปัจจุบัน
 node bulk-image-upload.js  # อัพโหลดรูปทั้งหมด (แบบเดิม)
-```
+```# Last updated: Thu, Aug  7, 2025 10:12:39 AM
