@@ -576,7 +576,25 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
 ## 📋 **Change Log & Summary**
 
-### 🔄 **Major Changes (August 6, 2025):**
+### 🔄 **LATEST: Database Reset & Booking System (August 7, 2025) ⭐ ใหม่ล่าสุด!**
+1. **🎯 Online Booking System:** ระบบจองออนไลน์สมบูรณ์ - `/booking`
+2. **📋 Customer Management:** ระบบจัดการลูกค้า - แบบฟอร์มจอง 4 ขั้นตอน
+3. **🗄️ Database Reset:** ลบ constraints ที่ซับซ้อน สร้างตารางใหม่แบบง่าย
+4. **🛠️ Reset Automation:** `reset-database.js` - reset database อัตโนมัติ
+5. **✅ Error-Free System:** ไม่มี validation errors อีกต่อไป
+6. **📧 Contact Updates:** อีเมล์: prapavarinniti@gmail.com, เบอร์: 081-514-6939
+7. **🚀 v2.9 Deployment:** Database reset พร้อม booking system สมบูรณ์
+
+### 🎊 **Major Features Added (v2.9):**
+- ✅ **Online Booking Form:** หน้าจองออนไลน์ที่ `/booking` 
+- ✅ **Customer Database:** Supabase bookings table (simplified)
+- ✅ **4-Step Form:** ข้อมูลลูกค้า → ประเภทงาน → รายละเอียด → ยืนยัน
+- ✅ **Auto Reference:** สร้างรหัสจอง FZYYMMDDxxxx อัตโนมัติ
+- ✅ **Admin Panel:** ดูข้อมูลการจองที่ `/admin`
+- ✅ **Database Reset Tool:** `node reset-database.js`
+- ✅ **No Validation Errors:** ลบ phone/email validation ที่ทำให้เกิด error
+
+### 🔄 **Previous Major Changes (August 6, 2025):**
 1. **New Category System:** 4 หมวดใหม่แทน 9 หมวดเก่า
 2. **Category Mapping:** UI-to-Database automatic conversion
 3. **Selective Upload/Delete System:** เลือกรูปเฉพาะในการอัพโหลด/ลบ ⭐ ใหม่!
@@ -587,31 +605,76 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 8. **Database:** Clean migration 290 → 96 records
 
 ### 📝 **Documentation Updated:**
-- ✅ README.md (comprehensive overhaul)
+- ✅ README.md (comprehensive overhaul + booking system)
 - ✅ ADMIN_COMMANDS_GUIDE.md (new category system)
+- ✅ supabase-reset.sql (database reset script)
+- ✅ reset-database.js (automated database reset)
 - ✅ Code comments และ type definitions
 
 ### 🎯 **Next Steps (Optional):**
-- Add more images using `npm run admin:selective` (recommended) or `node bulk-image-upload.js`
-- Use selective delete to remove unwanted images: `npm run admin` → option 6
-- Monitor performance metrics
-- Consider adding image search functionality
-- Implement user analytics
+- Test online booking system at `/booking`
+- Add more images using `npm run admin:selective`
+- Use selective delete: `npm run admin` → option 6
+- Monitor booking submissions in admin panel
+- Consider adding payment integration
 
 ---
 
-**🎉 Fuzio Catering Portfolio - เสร็จสมบูรณ์และ LIVE แล้ว!**
+## 🆕 **NEW: Online Booking System (v2.9)**
 
-*อัพเดตครั้งใหญ่: 6 สิงหาคม 2568*  
-*สถานะ: ✅ Live Production + Advanced Admin System + Selective Operations ⭐*  
-*URL: https://portfolio-yap6.onrender.com*
+### 📋 **Booking Form Features:**
+- **4-Step Process:** ลูกค้า → งาน → รายละเอียด → ยืนยัน
+- **Auto Reference:** รหัสจอง FZ + วันที่ + 4 หลัก (เช่น FZ25080700001)
+- **Simple Validation:** เฉพาะข้อมูลจำเป็น (ไม่มี complex constraints)
+- **Mobile Optimized:** ใช้งานได้ดีบนมือถือ
+- **Event Types:** งานแต่ง, บริษัท, วันเกิด, รับปริญญา, งานบุญ, อื่นๆ
 
----
+### 🗄️ **Database Structure (Simplified):**
+```sql
+bookings (
+  customer_name, customer_phone, customer_email,
+  event_type, event_date, event_time, guest_count,
+  venue_address, special_requests, 
+  booking_reference, created_at
+)
+```
 
-## 🚀 **Quick Start Commands**
+### 🔗 **Booking System URLs:**
+- **จองออนไลน์:** https://portfolio-yap6.onrender.com/booking
+- **Admin Panel:** https://portfolio-yap6.onrender.com/admin
+- **ติดต่อ:** https://portfolio-yap6.onrender.com/contact (อัพเดตข้อมูลติดต่อ)
+
+### 🛠️ **Database Management:**
 ```bash
-npm run admin              # เมนู admin แบบ interactive (แนะนำ)
-npm run admin:selective    # เลือกอัพโหลดรูปเฉพาะ (ใหม่!)
+# Reset database ใหม่ (ถ้าจำเป็น)
+node reset-database.js
+
+# ดูข้อมูลการจอง
+npm run admin
+```
+
+---
+
+**🎉 Fuzio Catering Portfolio + Online Booking System - เสร็จสมบูรณ์!**
+
+*อัพเดตครั้งใหญ่: 7 สิงหาคม 2568 - v2.9 DATABASE RESET*  
+*สถานะ: ✅ Live Production + Online Booking System + Database Reset ⭐*  
+*URL: https://portfolio-yap6.onrender.com*  
+*Booking: https://portfolio-yap6.onrender.com/booking ⭐ ใหม่!*
+
+---
+
+## 🚀 **Updated Quick Start Commands**
+```bash
+# Portfolio Management (เดิม)
+npm run admin              # เมนู admin แบบ interactive
+npm run admin:selective    # เลือกอัพโหลดรูปเฉพาะ
 npm run admin:stats        # ดูสถิติรูปปัจจุบัน
-node bulk-image-upload.js  # อัพโหลดรูปทั้งหมด (แบบเดิม)
-```# Last updated: Thu, Aug  7, 2025 10:12:39 AM
+node bulk-image-upload.js  # อัพโหลดรูปทั้งหมด
+
+# Booking System (ใหม่ v2.9)
+node reset-database.js     # รีเซ็ต database (ถ้าจำเป็น)
+npm run dev                # รันเว็บไซต์ (ไปที่ /booking เพื่อทดสอบ)
+```
+
+*สุดท้ายอัพเดต: 7 สิงหาคม 2568 เวลา 16:25 น. - Database Reset v2.9*

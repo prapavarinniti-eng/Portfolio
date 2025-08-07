@@ -501,7 +501,6 @@ export default function BookingPage() {
                                 eventDate: '',
                                 eventTime: '12:00',
                                 guestCount: 50,
-                                serviceType: '',
                                 budgetRange: '',
                                 specialRequests: '',
                                 venueType: 'customer_venue',
@@ -534,7 +533,7 @@ export default function BookingPage() {
                         <div><span className="font-semibold">ประเภทงาน:</span> {eventTypes.find(t => t.value === formData.eventType)?.label}</div>
                         <div><span className="font-semibold">วันที่:</span> {formData.eventDate}</div>
                         <div><span className="font-semibold">จำนวนแขก:</span> {formData.guestCount} คน</div>
-                        <div><span className="font-semibold">บริการ:</span> {serviceTypes.find(s => s.value === formData.serviceType)?.label}</div>
+                        <div><span className="font-semibold">งบประมาณ:</span> {formData.budgetRange}</div>
                         {estimatedPrice > 0 && (
                           <div className="md:col-span-2">
                             <span className="font-semibold">ราคาประเมิน:</span> 
