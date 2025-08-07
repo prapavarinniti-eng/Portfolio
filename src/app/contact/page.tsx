@@ -195,147 +195,28 @@ export default function Contact() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16">
-            {/* Contact Form */}
-            <div className="relative">
-              <div className="bg-white/70 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8 lg:p-10 relative overflow-hidden">
-                {/* Form background decoration */}
-                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-orange-400/10 to-red-400/10 rounded-full -translate-y-16 translate-x-16"></div>
-                <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-red-400/10 to-orange-400/10 rounded-full translate-y-12 -translate-x-12"></div>
-                
-                <div className="relative z-10">
-                  <h2 className="text-3xl font-bold text-gray-900 mb-2 flex items-center">
-                    <span className="mr-3">💬</span>
-                    ส่งข้อความถึงเรา
-                  </h2>
-                  <p className="text-gray-600 mb-8">เราจะติดต่อกลับโดยเร็วที่สุด</p>
-                  
-                  {submitted ? (
-                    <div className="text-center py-12 animate-fade-in">
-                      <div className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce">
-                        <span className="text-3xl text-white">✓</span>
-                      </div>
-                      <h3 className="text-2xl font-semibold text-green-600 mb-2">ส่งข้อความสำเร็จ!</h3>
-                      <p className="text-gray-600">เราจะติดต่อกลับภายใน 24 ชั่วโมง</p>
-                    </div>
-                  ) : (
-                    <form onSubmit={handleSubmit} className="space-y-6">
-                      <div className="group">
-                        <label htmlFor="name" className="block text-sm font-semibold text-gray-700 mb-3 flex items-center">
-                          <span className="mr-2">👤</span>
-                          ชื่อ-นามสกุล
-                        </label>
-                        <input
-                          type="text"
-                          id="name"
-                          name="name"
-                          value={formData.name}
-                          onChange={handleInputChange}
-                          required
-                          className="w-full px-5 py-4 bg-white/50 border-2 border-gray-200/50 rounded-2xl focus:ring-4 focus:ring-orange-500/20 focus:border-orange-500 transition-all duration-300 placeholder-gray-400 backdrop-blur-sm group-hover:border-orange-300"
-                          placeholder="กรุณากรอกชื่อ-นามสกุล"
-                        />
-                      </div>
-
-                      <div className="group">
-                        <label htmlFor="phone" className="block text-sm font-semibold text-gray-700 mb-3 flex items-center">
-                          <span className="mr-2">📱</span>
-                          เบอร์โทรศัพท์
-                        </label>
-                        <input
-                          type="tel"
-                          id="phone"
-                          name="phone"
-                          value={formData.phone}
-                          onChange={handleInputChange}
-                          required
-                          className="w-full px-5 py-4 bg-white/50 border-2 border-gray-200/50 rounded-2xl focus:ring-4 focus:ring-orange-500/20 focus:border-orange-500 transition-all duration-300 placeholder-gray-400 backdrop-blur-sm group-hover:border-orange-300"
-                          placeholder="081-514-6939"
-                        />
-                      </div>
-
-                      <div className="group">
-                        <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-3 flex items-center">
-                          <span className="mr-2">📧</span>
-                          อีเมล
-                        </label>
-                        <input
-                          type="email"
-                          id="email"
-                          name="email"
-                          value={formData.email}
-                          onChange={handleInputChange}
-                          required
-                          className="w-full px-5 py-4 bg-white/50 border-2 border-gray-200/50 rounded-2xl focus:ring-4 focus:ring-orange-500/20 focus:border-orange-500 transition-all duration-300 placeholder-gray-400 backdrop-blur-sm group-hover:border-orange-300"
-                          placeholder="prapavarinniti@gmail.com"
-                        />
-                      </div>
-
-                      <div className="group">
-                        <label htmlFor="eventType" className="block text-sm font-semibold text-gray-700 mb-3 flex items-center">
-                          <span className="mr-2">🎉</span>
-                          ประเภทงาน
-                        </label>
-                        <select
-                          id="eventType"
-                          name="eventType"
-                          value={formData.eventType}
-                          onChange={handleInputChange}
-                          required
-                          className="w-full px-5 py-4 bg-white/50 border-2 border-gray-200/50 rounded-2xl focus:ring-4 focus:ring-orange-500/20 focus:border-orange-500 transition-all duration-300 backdrop-blur-sm group-hover:border-orange-300 cursor-pointer"
-                        >
-                          <option value="">เลือกประเภทงาน</option>
-                          <option value="wedding">💒 งานแต่งงาน</option>
-                          <option value="merit">🙏 งานบุญ</option>
-                          <option value="corporate">🏢 งานบริษัท</option>
-                          <option value="birthday">🎂 งานวันเกิด</option>
-                          <option value="graduation">🎓 งานรับปริญญา</option>
-                          <option value="other">✨ อื่นๆ</option>
-                        </select>
-                      </div>
-
-                      <div className="group">
-                        <label htmlFor="message" className="block text-sm font-semibold text-gray-700 mb-3 flex items-center">
-                          <span className="mr-2">📝</span>
-                          รายละเอียด
-                        </label>
-                        <textarea
-                          id="message"
-                          name="message"
-                          value={formData.message}
-                          onChange={handleInputChange}
-                          rows={5}
-                          required
-                          className="w-full px-5 py-4 bg-white/50 border-2 border-gray-200/50 rounded-2xl focus:ring-4 focus:ring-orange-500/20 focus:border-orange-500 transition-all duration-300 placeholder-gray-400 backdrop-blur-sm group-hover:border-orange-300 resize-none"
-                          placeholder="กรุณาระบุรายละเอียดงาน วันที่ เวลา จำนวนคน และความต้องการพิเศษ"
-                        ></textarea>
-                      </div>
-
-                      <button
-                        type="submit"
-                        disabled={isSubmitting}
-                        className="group relative w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 disabled:from-gray-400 disabled:to-gray-500 text-white py-4 px-8 rounded-2xl font-bold text-lg transition-all duration-300 transform hover:scale-[1.02] hover:shadow-2xl disabled:transform-none disabled:cursor-not-allowed overflow-hidden"
-                      >
-                        <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                        <div className="relative flex items-center justify-center">
-                          {isSubmitting ? (
-                            <>
-                              <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin mr-3"></div>
-                              กำลังส่ง...
-                            </>
-                          ) : (
-                            <>
-                              <span className="mr-2">🚀</span>
-                              ส่งข้อความ
-                            </>
-                          )}
-                        </div>
-                      </button>
-                    </form>
-                  )}
-                </div>
+          <div className="max-w-4xl mx-auto">
+            {/* Booking redirect section */}
+            <div className="bg-gradient-to-r from-orange-50 to-red-50 backdrop-blur-xl rounded-3xl shadow-xl border border-orange-200/50 p-8 mb-12 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-orange-300/20 to-red-300/20 rounded-full -translate-y-16 translate-x-16"></div>
+              
+              <div className="relative z-10 text-center">
+                <h2 className="text-3xl font-bold text-gray-900 mb-4 flex items-center justify-center">
+                  <span className="mr-3">📋</span>
+                  ต้องการจองบริการ?
+                </h2>
+                <p className="text-lg text-gray-600 mb-6">
+                  ใช้ระบบจองออนไลน์ใหม่ของเรา กรอกข้อมูลง่าย ๆ แล้วทีมงานจะติดต่อกลับ
+                </p>
+                <a
+                  href="/booking"
+                  className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-2xl font-bold text-lg hover:from-orange-600 hover:to-red-600 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                >
+                  <span className="mr-2">🚀</span>
+                  จองออนไลน์เลย
+                </a>
+              </div>
             </div>
-          </div>
 
             {/* Contact Information */}
             <div className="space-y-8">

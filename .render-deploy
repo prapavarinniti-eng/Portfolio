@@ -1,7 +1,7 @@
 FORCE_DEPLOY=true
-TIMESTAMP=2025-08-07T14:45:00Z
-VERSION=booking-system-v2.0
-CHANGES=removed-service-package-selection
+TIMESTAMP=2025-08-07T15:15:00Z
+VERSION=booking-system-v2.1
+CHANGES=removed-contact-form-duplicate
 
 # This file is used to force Render deployment
 # by creating a change that triggers the build
