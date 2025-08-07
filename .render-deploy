@@ -1,7 +1,7 @@
 FORCE_DEPLOY=true
-TIMESTAMP=2025-08-07T15:35:00Z
-VERSION=booking-system-v2.3
-CHANGES=fix-rls-policies-admin-access
+TIMESTAMP=2025-08-07T15:45:00Z
+VERSION=booking-system-v2.4
+CHANGES=remove-fallback-force-database-insert
 
 # This file is used to force Render deployment
 # by creating a change that triggers the build

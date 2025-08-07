@@ -135,26 +135,27 @@ export async function POST(request: NextRequest) {
       booking_reference: bookingReference
     };
 
-    // Try to insert into database, fallback if Supabase not configured
-    let booking = null;
-    try {
-      const { data, error } = await supabase
-        .from('bookings')
-        .insert([bookingData])
-        .select()
-        .single();
+    // Insert into database - no fallback, must succeed
+    const { data: booking, error } = await supabase
+      .from('bookings')
+      .insert([bookingData])
+      .select()
+      .single();
 
-      if (error) {
-        console.error('Database error:', error);
-        // Create fallback booking object
-        booking = { ...bookingData, id: generateUUID() };
-      } else {
-        booking = data;
-      }
-    } catch (dbError) {
-      console.error('Supabase connection error:', dbError);
-      // Create fallback booking object when database is not available
-      booking = { ...bookingData, id: generateUUID() };
+    if (error) {
+      console.error('Database error:', error);
+      return NextResponse.json(
+        { error: `Database error: ${error.message}` },
+        { status: 500 }
+      );
+    }
+
+    if (!booking) {
+      console.error('No booking data returned');
+      return NextResponse.json(
+        { error: 'Failed to create booking' },
+        { status: 500 }
+      );
     }
 
     // Send confirmation email/SMS (optional)
