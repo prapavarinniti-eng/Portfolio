@@ -117,39 +117,92 @@ export default function BookingPage() {
               <p className="text-gray-600">กรอกข้อมูลพื้นฐาน เราจะ<strong>บันทึกข้อมูลไว้ในระบบ</strong>และติดต่อกลับภายใน 2 ชั่วโมง</p>
             </div>
 
-            <form className="space-y-6 max-w-2xl mx-auto" onSubmit={async (e) => {
-              e.preventDefault();
-              
-              const submitButton = e.currentTarget.querySelector('button[type="submit"]') as HTMLButtonElement;
-              const originalText = submitButton.innerHTML;
-              
-              try {
-                // Disable button and show loading
-                submitButton.disabled = true;
-                submitButton.innerHTML = '<div class="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2 inline-block"></div>กำลังส่งข้อมูล...';
+            <form 
+              className="space-y-6 max-w-2xl mx-auto" 
+              noValidate
+              onSubmit={async (e) => {
+                e.preventDefault();
                 
-                const formData = new FormData(e.target as HTMLFormElement);
+                const form = e.target as HTMLFormElement;
+                const formData = new FormData(form);
                 const data = Object.fromEntries(formData.entries());
                 
-                // First, save to our system
-                const response = await fetch('/api/booking-form', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify(data)
-                });
+                // Client-side validation
+                const errors: string[] = [];
+                if (!data.name || (data.name as string).trim().length < 2) {
+                  errors.push('กรุณากรอกชื่อ-นามสกุลให้ครบถ้วน (อย่างน้อย 2 ตัวอักษร)');
+                }
+                if (!data.phone || !(/^[0-9+\-\s()]{8,15}$/.test(data.phone as string))) {
+                  errors.push('กรุณากรอกเบอร์โทรศัพท์ให้ถูกต้อง');
+                }
+                if (!data.email || !(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email as string))) {
+                  errors.push('กรุณากรอกอีเมลให้ถูกต้อง');
+                }
+                if (!data.eventType) {
+                  errors.push('กรุณาเลือกประเภทงาน');
+                }
+                if (!data.eventDate) {
+                  errors.push('กรุณาเลือกวันที่จัดงาน');
+                } else {
+                  const eventDate = new Date(data.eventDate as string);
+                  const today = new Date();
+                  today.setHours(0, 0, 0, 0);
+                  if (eventDate < today) {
+                    errors.push('วันที่จัดงานต้องไม่ย้อนหลัง');
+                  }
+                }
+                if (!data.guestCount) {
+                  errors.push('กรุณาเลือกจำนวนแขก');
+                }
 
-                const result = await response.json();
+                if (errors.length > 0) {
+                  alert('❌ กรุณาแก้ไขข้อมูลต่อไปนี้:\n\n' + errors.join('\n'));
+                  return;
+                }
+
+                // Show confirmation dialog
+                const confirmMessage = `📋 ยืนยันข้อมูลการจอง:
+
+👤 ชื่อ: ${data.name}
+📞 เบอร์: ${data.phone}
+📧 อีเมล: ${data.email}
+🎉 ประเภทงาน: ${data.eventType}
+📅 วันที่: ${new Date(data.eventDate as string).toLocaleDateString('th-TH', { 
+  year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' 
+})}
+👥 จำนวนแขก: ${data.guestCount} คน
+📍 สถานที่: ${data.location || 'ไม่ได้ระบุ'}
+💬 รายละเอียด: ${data.details || 'ไม่ได้ระบุ'}
+
+คุณต้องการส่งข้อมูลนี้หรือไม่?`;
+
+                if (!confirm(confirmMessage)) {
+                  return;
+                }
                 
-                if (response.ok) {
-                  // Success! Show booking reference
-                  alert(`✅ บันทึกข้อมูลสำเร็จ!
-รหัสการจอง: ${result.reference}
-
-เราจะติดต่อกลับภายใน 2 ชั่วโมง
-กรุณาเก็บรหัสนี้ไว้สำหรับการติดตาม`);
+                const submitButton = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+                const originalText = submitButton.innerHTML;
+                
+                try {
+                  // Disable button and show loading
+                  submitButton.disabled = true;
+                  submitButton.innerHTML = '<div class="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2 inline-block"></div>กำลังบันทึกข้อมูล...';
                   
-                  // Create WhatsApp message with booking reference
-                  const message = `🍽️ Fuzio Catering - จองบริการออนไลน์
+                  // Save to our system
+                  const response = await fetch('/api/booking-form', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                  });
+
+                  const result = await response.json();
+                  
+                  if (response.ok) {
+                    // Update button text for WhatsApp step
+                    submitButton.innerHTML = '<div class="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2 inline-block"></div>เปิด WhatsApp...';
+                    
+                    // Create WhatsApp message with booking reference
+                    const message = `🍽️ Fuzio Catering - จองบริการออนไลน์
 
 📋 รหัสการจอง: ${result.reference}
 
@@ -158,33 +211,78 @@ export default function BookingPage() {
 📞 เบอร์: ${data.phone}
 📧 อีเมล: ${data.email}
 🎉 ประเภทงาน: ${data.eventType}
-📅 วันที่: ${data.eventDate}
+📅 วันที่: ${new Date(data.eventDate as string).toLocaleDateString('th-TH', { 
+  year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' 
+})}
 👥 จำนวนแขก: ${data.guestCount} คน
 📍 สถานที่: ${data.location || 'ไม่ได้ระบุ'}
 💬 รายละเอียด: ${data.details || 'ไม่ได้ระบุ'}
 
 ขอใบเสนอราคาครับ/ค่ะ`;
 
-                  // Open WhatsApp
-                  const whatsappUrl = `https://wa.me/66815146939?text=${encodeURIComponent(message)}`;
-                  window.open(whatsappUrl, '_blank');
+                    // Create WhatsApp link
+                    const whatsappUrl = `https://wa.me/66815146939?text=${encodeURIComponent(message)}`;
+                    
+                    // Show success message with options
+                    setTimeout(() => {
+                      const userChoice = confirm(`✅ บันทึกข้อมูลสำเร็จ!
+รหัสการจอง: ${result.reference}
+
+เราได้บันทึกข้อมูลของคุณเรียบร้อยแล้ว
+เราจะติดต่อกลับภายใน 2 ชั่วโมง
+
+คลิก "ตกลง" เพื่อเปิด WhatsApp และส่งข้อความ
+หรือ "ยกเลิก" เพื่อคัดลอกรหัสการจองเท่านั้น`);
+                      
+                      if (userChoice) {
+                        // User wants to open WhatsApp
+                        const newWindow = window.open(whatsappUrl, '_blank');
+                        if (!newWindow) {
+                          // Popup blocked, show alternative
+                          const fallbackChoice = confirm(`ไม่สามารถเปิด WhatsApp ได้ (popup ถูกบล็อก)
+
+คลิก "ตกลง" เพื่อคัดลอกลิงก์ WhatsApp
+หรือ "ยกเลิก" เพื่อข้าม`);
+                          
+                          if (fallbackChoice) {
+                            navigator.clipboard.writeText(whatsappUrl).then(() => {
+                              alert('📋 คัดลอกลิงก์ WhatsApp เรียบร้อยแล้ว!\nกรุณานำไปวางในเบราว์เซอร์');
+                            }).catch(() => {
+                              alert(`📋 ลิงก์ WhatsApp:\n${whatsappUrl}\n\nกรุณาคัดลอกลิงก์นี้ไปใช้เอง`);
+                            });
+                          }
+                        }
+                      } else {
+                        // User just wants the reference
+                        const copyChoice = confirm('คุณต้องการคัดลอกรหัสการจองหรือไม่?');
+                        if (copyChoice) {
+                          navigator.clipboard.writeText(result.reference).then(() => {
+                            alert('📋 คัดลอกรหัสการจองเรียบร้อยแล้ว!');
+                          }).catch(() => {
+                            alert(`📋 รหัสการจองของคุณ: ${result.reference}\n\nกรุณาจดบันทึกไว้`);
+                          });
+                        }
+                      }
+                      
+                      // Reset form after success
+                      form.reset();
+                    }, 500);
+                    
+                  } else {
+                    // Error saving data
+                    alert(`❌ เกิดข้อผิดพลาด: ${result.error || 'ไม่สามารถบันทึกข้อมูลได้'}\n\nกรุณาลองใหม่อีกครั้ง หรือติดต่อโทร 081-514-6939`);
+                  }
                   
-                  // Reset form
-                  (e.target as HTMLFormElement).reset();
-                  
-                } else {
-                  // Error saving data
-                  alert(`❌ เกิดข้อผิดพลาด: ${result.error}`);
+                } catch (error) {
+                  console.error('Booking error:', error);
+                  alert('❌ เกิดข้อผิดพลาดในการเชื่อมต่อ\n\nกรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต\nหรือติดต่อโทร 081-514-6939');
+                } finally {
+                  // Re-enable button
+                  submitButton.disabled = false;
+                  submitButton.innerHTML = originalText;
                 }
-                
-              } catch (error) {
-                alert('❌ เกิดข้อผิดพลาดในการเชื่อมต่อ กรุณาลองใหม่อีกครั้ง');
-              } finally {
-                // Re-enable button
-                submitButton.disabled = false;
-                submitButton.innerHTML = originalText;
-              }
-            }}>
+              }}
+            >
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">ชื่อ-นามสกุล *</label>
