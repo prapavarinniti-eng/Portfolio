@@ -265,22 +265,26 @@ export default function Contact() {
                       </div>
                     </div>
 
-                    <div className="group flex items-start p-4 rounded-2xl hover:bg-orange-50/50 transition-all duration-300 cursor-pointer">
+                  {/* LINE Contact */}
+                  <a href="https://line.me/ti/p/bua_nithi" className="block">
+                    <div className="group flex items-start p-4 rounded-2xl hover:bg-green-50/50 transition-all duration-300 cursor-pointer">
                       <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-full flex items-center justify-center text-xl group-hover:scale-110 transition-transform duration-300">
                         💬
                       </div>
                       <div className="ml-4 flex-1">
-                        <h3 className="text-xl font-bold text-gray-900 mb-1">Line</h3>
-                        <p className="text-lg font-semibold text-green-600">@fuziocatering</p>
+                        <h3 className="text-xl font-bold text-gray-900 mb-1">LINE</h3>
+                        <p className="text-lg font-semibold text-green-600">@bua_nithi</p>
                         <p className="text-sm text-gray-500 flex items-center mt-1">
                           <span className="mr-2">💚</span>
-                          ปรึกษาฟรี ตอบรวดเร็ว
+                          แชทได้ตลอด 24 ชั่วโมง
                         </p>
                       </div>
                       <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                         <span className="text-green-500">→</span>
                       </div>
                     </div>
+                  </a>
+
 
                     <div className="group flex items-start p-4 rounded-2xl hover:bg-orange-50/50 transition-all duration-300">
                       <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full flex items-center justify-center text-xl group-hover:scale-110 transition-transform duration-300">
@@ -416,6 +420,13 @@ export default function Contact() {
                     >
                       <span className="mr-2">📧</span>
                       ส่งอีเมล
+                    </a>
+                    <a
+                      href="https://line.me/ti/p/bua_nithi"
+                      className="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-2xl font-semibold hover:from-green-600 hover:to-emerald-600 transition-all duration-300 transform hover:scale-105"
+                    >
+                      <span className="mr-2">💬</span>
+                      แชท LINE
                     </a>
                   </div>
                 </div>
