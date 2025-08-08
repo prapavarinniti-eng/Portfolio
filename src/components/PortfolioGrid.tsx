@@ -195,9 +195,6 @@ const ImageModal = memo<ImageModalProps>(({ image, onClose }) => {
           
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-6 rounded-b-lg">
             <div className="text-white">
-              <span className="text-xs font-medium text-orange-400 bg-orange-900 bg-opacity-50 px-2 py-1 rounded-full mb-2 inline-block">
-                {categoryLabels[image.category] || image.category}
-              </span>
               <h3 id="modal-title" className="text-xl font-bold">{image.title}</h3>
             </div>
           </div>
