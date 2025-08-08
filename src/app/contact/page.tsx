@@ -206,14 +206,14 @@ export default function Contact() {
                   ต้องการจองบริการ?
                 </h2>
                 <p className="text-lg text-gray-600 mb-6">
-                  ใช้ระบบจองออนไลน์ใหม่ของเรา กรอกข้อมูลง่าย ๆ แล้วทีมงานจะติดต่อกลับ
+                  ติดต่อเราโดยตรงเพื่อปรึกษารายละเอียดและรับใบเสนอราคา
                 </p>
                 <a
-                  href="/booking"
+                  href="tel:+66815146939"
                   className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-2xl font-bold text-lg hover:from-orange-600 hover:to-red-600 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
                 >
-                  <span className="mr-2">🚀</span>
-                  จองออนไลน์เลย
+                  <span className="mr-2">📞</span>
+                  โทรเลย
                 </a>
               </div>
             </div>
