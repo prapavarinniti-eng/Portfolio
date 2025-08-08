@@ -102,12 +102,6 @@ const PortfolioItem = memo<PortfolioItemProps>(({ image, onImageClick }) => {
           quality={75}
         />
         
-        {/* Category badge - always visible */}
-        <div className="absolute top-2 left-2">
-          <span className="text-xs font-medium text-white bg-orange-600 bg-opacity-90 px-2 py-1 rounded-full">
-            {categoryLabels[image.category] || image.category}
-          </span>
-        </div>
         
         {/* Title overlay - visible on hover/focus or mobile */}
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 flex items-end">
